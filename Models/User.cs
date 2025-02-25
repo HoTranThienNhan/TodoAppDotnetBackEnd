@@ -1,0 +1,19 @@
+using System.Text.Json.Serialization;
+
+namespace todo_app_backend.Models
+{
+    public class User
+    {
+        public string Id { get; set; } = string.Empty;
+        public string Fullname { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string Phone { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+        public string? RefreshToken { get; set; }
+        public DateTime? RefreshTokenExpiryTime { get; set; }
+        public DateTime CreatedAt { get; set; }
+        
+        [JsonIgnore]
+        public virtual ICollection<TodoTask> TodoTasks { get; set; } = new List<TodoTask>();
+    }
+}
