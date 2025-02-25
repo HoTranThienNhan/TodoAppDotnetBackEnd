@@ -30,8 +30,14 @@ namespace todo_app_backend.Controllers
         }
 
         [HttpGet("details")]
-        public async Task<ActionResult> GetTodoTaskDetails([FromQuery] string id) {
-            var todoTask = await todoTaskRepository.GetDetailsAsync(id);
+        public async Task<ActionResult> GetTodoTaskDetailsWithSearch([FromQuery] string? id, string? search) {
+            if (id is null && search is null) {
+                return BadRequest("Todo Task does not exist.");
+            } else if (id is not null && search is not null) {
+                return BadRequest("Cannot find Todo Task with both Id and Search");
+            }
+
+            var todoTask = await todoTaskRepository.GetDetailsWithSearchAsync(id, search);
 
             return Ok(todoTask);
         }

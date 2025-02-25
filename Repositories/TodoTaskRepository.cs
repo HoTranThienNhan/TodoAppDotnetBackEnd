@@ -149,9 +149,34 @@ namespace todo_app_backend.Repositories
             }
         }
 
-        public async Task<TodoTaskResponseDto?> GetDetailsAsync(string id) {
-            var todoTask = await appDbContext.TodoTask
-                .Include(t => t.TodoTaskTags)
+        // public async Task<TodoTaskResponseDto?> GetDetailsAsync(string id) {
+        //     var todoTask = await appDbContext.TodoTask
+        //         .Include(t => t.TodoTaskTags)
+        //         .ThenInclude(t => t.Tag)
+        //         .Include(t => t.TodoSubtasks)
+        //         .Select(todoTask => new TodoTaskResponseDto() {
+        //             Id = todoTask.Id,
+        //             Name = todoTask.Name,
+        //             Description = todoTask.Description,
+        //             Date = todoTask.Date,
+        //             IsImportant = todoTask.IsImportant,
+        //             IsDone = todoTask.IsDone,
+        //             UserId = todoTask.UserId,
+        //             CreatedAt = todoTask.CreatedAt,
+        //             Tags = todoTask.TodoTaskTags.Select(todoTaskTag => todoTaskTag.Tag.Name).ToList(),
+        //             TodoSubTasks = todoTask.TodoSubtasks.Select(todoSubtask => new TodoSubtaskDto() {
+        //                 Name = todoSubtask.Name,
+        //                 IsDone = todoSubtask.IsDone
+        //             }).ToList()
+        //         })
+        //         .FirstOrDefaultAsync(todoTask => todoTask.Id == id);
+
+        //     return todoTask;
+        // }
+
+        public async Task<TodoTaskResponseDto?> GetDetailsWithSearchAsync(string? id, string? search) {
+            if (id is not null && search is null) {
+                return await appDbContext.TodoTask.Include(t => t.TodoTaskTags)
                 .ThenInclude(t => t.Tag)
                 .Include(t => t.TodoSubtasks)
                 .Select(todoTask => new TodoTaskResponseDto() {
@@ -170,8 +195,30 @@ namespace todo_app_backend.Repositories
                     }).ToList()
                 })
                 .FirstOrDefaultAsync(todoTask => todoTask.Id == id);
-
-            return todoTask;
+            } else if (id is null && search is not null) {
+                return await appDbContext.TodoTask.Include(t => t.TodoTaskTags)
+                .ThenInclude(t => t.Tag)
+                .Include(t => t.TodoSubtasks)
+                .Where(todoTask => todoTask.Name.Contains(search))
+                .Select(todoTask => new TodoTaskResponseDto() {
+                    Id = todoTask.Id,
+                    Name = todoTask.Name,
+                    Description = todoTask.Description,
+                    Date = todoTask.Date,
+                    IsImportant = todoTask.IsImportant,
+                    IsDone = todoTask.IsDone,
+                    UserId = todoTask.UserId,
+                    CreatedAt = todoTask.CreatedAt,
+                    Tags = todoTask.TodoTaskTags.Select(todoTaskTag => todoTaskTag.Tag.Name).ToList(),
+                    TodoSubTasks = todoTask.TodoSubtasks.Select(todoSubtask => new TodoSubtaskDto() {
+                        Name = todoSubtask.Name,
+                        IsDone = todoSubtask.IsDone
+                    }).ToList()
+                })
+                .FirstOrDefaultAsync();
+            } else {
+                return null;
+            }
         }
 
         public async Task<TodoTask?> UpdateAsync(TodoTaskUpdateDto todoTaskUpdateDto) {

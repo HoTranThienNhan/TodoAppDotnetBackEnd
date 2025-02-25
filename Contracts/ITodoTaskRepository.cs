@@ -17,7 +17,11 @@ namespace todo_app_backend.Contracts
             throw new NotImplementedException();
         }
 
-        Task<TodoTaskResponseDto?> GetDetailsAsync(string id) {
+        // Task<TodoTaskResponseDto?> GetDetailsAsync(string id) {
+        //     throw new NotImplementedException();
+        // }
+
+        Task<TodoTaskResponseDto?> GetDetailsWithSearchAsync(string? id, string? search) {
             throw new NotImplementedException();
         }
 
