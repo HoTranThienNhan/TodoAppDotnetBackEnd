@@ -13,7 +13,7 @@ namespace todo_app_backend.Contracts
             throw new NotImplementedException();
         }
 
-        Task<List<TodoTaskResponseDto>> GetAllByUserIdAsync(string userId) {
+        Task<List<TodoTaskResponseDto>> GetAllWithFilterByUserIdAsync(string userId, string? filter) {
             throw new NotImplementedException();
         }
 

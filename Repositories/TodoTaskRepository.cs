@@ -3,6 +3,7 @@ using todo_app_backend.Contracts;
 using todo_app_backend.Data;
 using todo_app_backend.DTOs.TodoSubtask;
 using todo_app_backend.DTOs.TodoTask;
+using todo_app_backend.Enums.TodoTask;
 using todo_app_backend.Models;
 
 namespace todo_app_backend.Repositories
@@ -31,8 +32,9 @@ namespace todo_app_backend.Repositories
             return todoTask;
         }
 
-        public async Task<List<TodoTaskResponseDto>> GetAllByUserIdAsync(string userId) {
-            var todoTask = await appDbContext.TodoTask
+        public async Task<List<TodoTaskResponseDto>> GetAllWithFilterByUserIdAsync(string userId, string? filter) {
+            if (filter is null) {
+                return await appDbContext.TodoTask
                 .Include(t => t.TodoTaskTags)
                 .ThenInclude(t => t.Tag)
                 .Include(t => t.TodoSubtasks)
@@ -53,8 +55,98 @@ namespace todo_app_backend.Repositories
                     }).ToList()
                 })
                 .ToListAsync();
-
-            return todoTask;
+            } else if (filter.Equals(GetAllFilter.Today.ToString())) {
+                return await appDbContext.TodoTask
+                    .Include(t => t.TodoTaskTags)
+                    .ThenInclude(t => t.Tag)
+                    .Include(t => t.TodoSubtasks)
+                    .Where(todoTask => todoTask.UserId == userId && todoTask.Date.Date.CompareTo(DateTime.UtcNow.Date) == 0)
+                    .Select(todoTask => new TodoTaskResponseDto() {
+                        Id = todoTask.Id,
+                        Name = todoTask.Name,
+                        Description = todoTask.Description,
+                        Date = todoTask.Date,
+                        IsImportant = todoTask.IsImportant,
+                        IsDone = todoTask.IsDone,
+                        UserId = todoTask.UserId,
+                        CreatedAt = todoTask.CreatedAt,
+                        Tags = todoTask.TodoTaskTags.Select(todoTaskTag => todoTaskTag.Tag.Name).ToList(),
+                        TodoSubTasks = todoTask.TodoSubtasks.Select(todoSubtask => new TodoSubtaskDto() {
+                            Name = todoSubtask.Name,
+                            IsDone = todoSubtask.IsDone
+                        }).ToList()
+                    })
+                    .ToListAsync();
+            }
+            else if (filter.Equals(GetAllFilter.Upcoming.ToString())) {
+                return await appDbContext.TodoTask
+                    .Include(t => t.TodoTaskTags)
+                    .ThenInclude(t => t.Tag)
+                    .Include(t => t.TodoSubtasks)
+                    .Where(todoTask => todoTask.UserId == userId && todoTask.Date.Date.CompareTo(DateTime.UtcNow.Date) > 0)
+                    .Select(todoTask => new TodoTaskResponseDto() {
+                        Id = todoTask.Id,
+                        Name = todoTask.Name,
+                        Description = todoTask.Description,
+                        Date = todoTask.Date,
+                        IsImportant = todoTask.IsImportant,
+                        IsDone = todoTask.IsDone,
+                        UserId = todoTask.UserId,
+                        CreatedAt = todoTask.CreatedAt,
+                        Tags = todoTask.TodoTaskTags.Select(todoTaskTag => todoTaskTag.Tag.Name).ToList(),
+                        TodoSubTasks = todoTask.TodoSubtasks.Select(todoSubtask => new TodoSubtaskDto() {
+                            Name = todoSubtask.Name,
+                            IsDone = todoSubtask.IsDone
+                        }).ToList()
+                    })
+                    .ToListAsync();
+            } else if (filter.Equals(GetAllFilter.Done.ToString())) { 
+                return await appDbContext.TodoTask
+                    .Include(t => t.TodoTaskTags)
+                    .ThenInclude(t => t.Tag)
+                    .Include(t => t.TodoSubtasks)
+                    .Where(todoTask => todoTask.UserId == userId && todoTask.IsDone == true)
+                    .Select(todoTask => new TodoTaskResponseDto() {
+                        Id = todoTask.Id,
+                        Name = todoTask.Name,
+                        Description = todoTask.Description,
+                        Date = todoTask.Date,
+                        IsImportant = todoTask.IsImportant,
+                        IsDone = todoTask.IsDone,
+                        UserId = todoTask.UserId,
+                        CreatedAt = todoTask.CreatedAt,
+                        Tags = todoTask.TodoTaskTags.Select(todoTaskTag => todoTaskTag.Tag.Name).ToList(),
+                        TodoSubTasks = todoTask.TodoSubtasks.Select(todoSubtask => new TodoSubtaskDto() {
+                            Name = todoSubtask.Name,
+                            IsDone = todoSubtask.IsDone
+                        }).ToList()
+                    })
+                    .ToListAsync();
+            } else if (filter.Equals(GetAllFilter.Important.ToString())) { 
+                return await appDbContext.TodoTask
+                    .Include(t => t.TodoTaskTags)
+                    .ThenInclude(t => t.Tag)
+                    .Include(t => t.TodoSubtasks)
+                    .Where(todoTask => todoTask.UserId == userId && todoTask.IsImportant == true)
+                    .Select(todoTask => new TodoTaskResponseDto() {
+                        Id = todoTask.Id,
+                        Name = todoTask.Name,
+                        Description = todoTask.Description,
+                        Date = todoTask.Date,
+                        IsImportant = todoTask.IsImportant,
+                        IsDone = todoTask.IsDone,
+                        UserId = todoTask.UserId,
+                        CreatedAt = todoTask.CreatedAt,
+                        Tags = todoTask.TodoTaskTags.Select(todoTaskTag => todoTaskTag.Tag.Name).ToList(),
+                        TodoSubTasks = todoTask.TodoSubtasks.Select(todoSubtask => new TodoSubtaskDto() {
+                            Name = todoSubtask.Name,
+                            IsDone = todoSubtask.IsDone
+                        }).ToList()
+                    })
+                    .ToListAsync();
+            } else {
+                return [];
+            }
         }
 
         public async Task<TodoTaskResponseDto?> GetDetailsAsync(string id) {
