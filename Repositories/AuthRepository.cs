@@ -18,6 +18,16 @@ namespace todo_app_backend.Repositories
             return await appDbContext.User.AnyAsync(user => user.Id == userId);
         }
 
+        public async Task<bool> CheckUserActiveAsync(string email) {
+            var user = await appDbContext.User.FirstOrDefaultAsync(user => user.Email == email);
+
+            if (user is null) {
+                return false;
+            } 
+
+            return user.IsActive;
+        }
+
         public async Task<User?> RegisterAsync(UserRegisterDto userRegisterDto) {
             if (await appDbContext.User.AnyAsync(user => user.Email == userRegisterDto.Email)) {
                 return null;
@@ -31,6 +41,7 @@ namespace todo_app_backend.Repositories
             user.Email = userRegisterDto.Email;
             user.Phone = userRegisterDto.Phone;
             user.Password = hashedPassword;
+            user.IsActive = true;
             user.CreatedAt = DateTime.UtcNow;
 
             await appDbContext.User.AddAsync(user);
@@ -130,7 +141,31 @@ namespace todo_app_backend.Repositories
                 Id = user.Id,
                 Fullname = user.Fullname,
                 Email = user.Email,
-                Phone = user.Phone
+                Phone = user.Phone,
+                IsActive = user.IsActive
+            };
+        }
+
+        public async Task<UserInfoDto?> UpdateAsync(UserInfoDto userInfoDto) {
+            var user = await appDbContext.User.FirstOrDefaultAsync(user => user.Id == userInfoDto.Id);
+
+            if (user is null) {
+                return null;
+            }
+
+            user.Fullname = userInfoDto.Fullname ?? user.Fullname;
+            user.Email = userInfoDto.Email ?? user.Email;
+            user.Phone = userInfoDto.Phone ?? user.Phone;
+            user.IsActive = userInfoDto.IsActive ?? user.IsActive;
+
+            await appDbContext.SaveChangesAsync();
+
+            return new UserInfoDto() {
+                Id = user.Id,
+                Fullname = user.Fullname,
+                Email = user.Email,
+                Phone = user.Phone,
+                IsActive = user.IsActive
             };
         }
     }

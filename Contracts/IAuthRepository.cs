@@ -9,6 +9,10 @@ namespace todo_app_backend.Contracts
             throw new NotImplementedException();
         }
 
+        Task<bool> CheckUserActiveAsync(string userId) {
+            throw new NotImplementedException();
+        }
+
         Task<User?> RegisterAsync(UserRegisterDto userRegisterDto) {
             throw new NotImplementedException();
         }
@@ -22,6 +26,10 @@ namespace todo_app_backend.Contracts
         }
 
         Task<UserInfoDto?> GetByEmailAsync(string email) {
+            throw new NotImplementedException();
+        }
+
+        Task<UserInfoDto?> UpdateAsync(UserInfoDto userInfoDto) {
             throw new NotImplementedException();
         }
     }

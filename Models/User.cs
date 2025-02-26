@@ -9,6 +9,7 @@ namespace todo_app_backend.Models
         public string Email { get; set; } = string.Empty;
         public string Phone { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
+        public bool IsActive { get; set; }
         public string? RefreshToken { get; set; }
         public DateTime? RefreshTokenExpiryTime { get; set; }
         public DateTime CreatedAt { get; set; }
