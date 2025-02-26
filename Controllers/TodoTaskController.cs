@@ -23,21 +23,19 @@ namespace todo_app_backend.Controllers
         }
 
         [HttpGet("all")]
-        public async Task<ActionResult> GetAllTodoTasksWithFilterByUserId([FromQuery] string userId, string? filter, bool? isDeleted = false) {
-            var todoTasks = await todoTaskRepository.GetAllWithFilterByUserIdAsync(userId, filter, isDeleted);
+        public async Task<ActionResult> GetAllTodoTasksWithFilterByUserId([FromQuery] string? userId, string? filter, string? search, bool? isDeleted = false) {
+            if (search is not null && filter is not null) {
+                return BadRequest("Cannot find All Todo Tasks with both search and filter");
+            }
+
+            var todoTasks = await todoTaskRepository.GetAllWithFilterAndSearchByUserIdAsync(userId, filter, search, isDeleted);
 
             return Ok(todoTasks);
         }
 
         [HttpGet("details")]
-        public async Task<ActionResult> GetTodoTaskDetailsWithSearch([FromQuery] string? id, string? search) {
-            if (id is null && search is null) {
-                return BadRequest("Todo Task does not exist.");
-            } else if (id is not null && search is not null) {
-                return BadRequest("Cannot find Todo Task with both Id and Search");
-            }
-
-            var todoTask = await todoTaskRepository.GetDetailsWithSearchAsync(id, search);
+        public async Task<ActionResult> GetTodoTaskDetailsWithSearch([FromQuery] string id) {
+            var todoTask = await todoTaskRepository.GetDetailsAsync(id);
 
             return Ok(todoTask);
         }
