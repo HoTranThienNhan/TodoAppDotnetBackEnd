@@ -18,7 +18,6 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<ITagRepository, TagRepository>();
 builder.Services.AddScoped<ITodoTaskRepository, TodoTaskRepository>();
-builder.Services.AddScoped<ITodoTaskTagRepository, TodoTaskTagRepository>();
 builder.Services.AddScoped<ITodoSubtaskRepository, TodoSubtaskRepository>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(option => {

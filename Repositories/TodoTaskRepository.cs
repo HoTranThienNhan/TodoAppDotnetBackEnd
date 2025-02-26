@@ -26,14 +26,22 @@ namespace todo_app_backend.Repositories
                 UserId = todoTaskAddDto.UserId,
                 CreatedAt = DateTime.UtcNow
             };
-
             await appDbContext.TodoTask.AddAsync(todoTask);
             await appDbContext.SaveChangesAsync();
+
+            foreach(var tag in todoTaskAddDto.Tags) {
+                var todoTaskTag = new TodoTaskTag() {
+                    TodoTaskId = todoTask.Id,
+                    TagId = tag.Id
+                };
+                await appDbContext.TodoTaskTag.AddAsync(todoTaskTag);
+                await appDbContext.SaveChangesAsync();
+            }
 
             return todoTask;
         }
 
-        public async Task<List<TodoTaskResponseDto>> GetAllWithFilterByUserIdAsync(string userId, string? filter, bool? isDeleted = false) {
+        public async Task<List<TodoTaskResponseDto>> GetAllWithFilterByUserIdAsync(string userId, string? filter, bool? isDeleted) {
             if (filter is null) {
                 return await appDbContext.TodoTask
                 .Include(t => t.TodoTaskTags)

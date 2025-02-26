@@ -23,8 +23,8 @@ namespace todo_app_backend.Controllers
         }
 
         [HttpGet("all")]
-        public async Task<ActionResult> GetAllTodoTasksWithFilterByUserId([FromQuery] string userId, string? filter) {
-            var todoTasks = await todoTaskRepository.GetAllWithFilterByUserIdAsync(userId, filter);
+        public async Task<ActionResult> GetAllTodoTasksWithFilterByUserId([FromQuery] string userId, string? filter, bool? isDeleted = false) {
+            var todoTasks = await todoTaskRepository.GetAllWithFilterByUserIdAsync(userId, filter, isDeleted);
 
             return Ok(todoTasks);
         }
