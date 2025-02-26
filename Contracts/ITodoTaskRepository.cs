@@ -13,13 +13,9 @@ namespace todo_app_backend.Contracts
             throw new NotImplementedException();
         }
 
-        Task<List<TodoTaskResponseDto>> GetAllWithFilterByUserIdAsync(string userId, string? filter) {
+        Task<List<TodoTaskResponseDto>> GetAllWithFilterByUserIdAsync(string userId, string? filter, bool? isDeleted) {
             throw new NotImplementedException();
         }
-
-        // Task<TodoTaskResponseDto?> GetDetailsAsync(string id) {
-        //     throw new NotImplementedException();
-        // }
 
         Task<TodoTaskResponseDto?> GetDetailsWithSearchAsync(string? id, string? search) {
             throw new NotImplementedException();

@@ -15,6 +15,7 @@ namespace todo_app_backend.DTOs.TodoTask
         public DateTime? Date { get; set; }
         public bool? IsImportant { get; set; }
         public bool? IsDone { get; set; } 
+        public bool? IsDeleted { get; set; } 
 
         [Required(ErrorMessage = "{0} is required.")]
         public string UserId { get; set; } = string.Empty;

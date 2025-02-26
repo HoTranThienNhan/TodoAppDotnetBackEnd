@@ -10,6 +10,7 @@ namespace todo_app_backend.Models
         public DateTime Date { get; set; }
         public bool IsImportant { get; set; }
         public bool IsDone { get; set; } 
+        public bool IsDeleted { get; set; } 
         public string UserId { get; set; } = string.Empty;
 
         [JsonIgnore]

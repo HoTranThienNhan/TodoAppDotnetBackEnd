@@ -22,6 +22,7 @@ namespace todo_app_backend.Repositories
                 Date = todoTaskAddDto.Date ?? DateTime.UtcNow,
                 IsImportant = todoTaskAddDto.IsImportant ?? false ,
                 IsDone = todoTaskAddDto.IsDone ?? false,
+                IsDeleted = todoTaskAddDto.IsDeleted ?? false,
                 UserId = todoTaskAddDto.UserId,
                 CreatedAt = DateTime.UtcNow
             };
@@ -32,13 +33,13 @@ namespace todo_app_backend.Repositories
             return todoTask;
         }
 
-        public async Task<List<TodoTaskResponseDto>> GetAllWithFilterByUserIdAsync(string userId, string? filter) {
+        public async Task<List<TodoTaskResponseDto>> GetAllWithFilterByUserIdAsync(string userId, string? filter, bool? isDeleted = false) {
             if (filter is null) {
                 return await appDbContext.TodoTask
                 .Include(t => t.TodoTaskTags)
                 .ThenInclude(t => t.Tag)
                 .Include(t => t.TodoSubtasks)
-                .Where(todoTask => todoTask.UserId == userId)
+                .Where(todoTask => todoTask.UserId == userId && todoTask.IsDeleted == isDeleted)
                 .Select(todoTask => new TodoTaskResponseDto() {
                     Id = todoTask.Id,
                     Name = todoTask.Name,
@@ -46,6 +47,7 @@ namespace todo_app_backend.Repositories
                     Date = todoTask.Date,
                     IsImportant = todoTask.IsImportant,
                     IsDone = todoTask.IsDone,
+                    IsDeleted = todoTask.IsDeleted,
                     UserId = todoTask.UserId,
                     CreatedAt = todoTask.CreatedAt,
                     Tags = todoTask.TodoTaskTags.Select(todoTaskTag => todoTaskTag.Tag.Name).ToList(),
@@ -60,7 +62,9 @@ namespace todo_app_backend.Repositories
                     .Include(t => t.TodoTaskTags)
                     .ThenInclude(t => t.Tag)
                     .Include(t => t.TodoSubtasks)
-                    .Where(todoTask => todoTask.UserId == userId && todoTask.Date.Date.CompareTo(DateTime.UtcNow.Date) == 0)
+                    .Where(todoTask => todoTask.UserId == userId 
+                        && todoTask.Date.Date.CompareTo(DateTime.UtcNow.Date) == 0
+                        && todoTask.IsDeleted == isDeleted)
                     .Select(todoTask => new TodoTaskResponseDto() {
                         Id = todoTask.Id,
                         Name = todoTask.Name,
@@ -68,6 +72,7 @@ namespace todo_app_backend.Repositories
                         Date = todoTask.Date,
                         IsImportant = todoTask.IsImportant,
                         IsDone = todoTask.IsDone,
+                        IsDeleted = todoTask.IsDeleted,
                         UserId = todoTask.UserId,
                         CreatedAt = todoTask.CreatedAt,
                         Tags = todoTask.TodoTaskTags.Select(todoTaskTag => todoTaskTag.Tag.Name).ToList(),
@@ -83,7 +88,9 @@ namespace todo_app_backend.Repositories
                     .Include(t => t.TodoTaskTags)
                     .ThenInclude(t => t.Tag)
                     .Include(t => t.TodoSubtasks)
-                    .Where(todoTask => todoTask.UserId == userId && todoTask.Date.Date.CompareTo(DateTime.UtcNow.Date) > 0)
+                    .Where(todoTask => todoTask.UserId == userId 
+                        && todoTask.Date.Date.CompareTo(DateTime.UtcNow.Date) > 0
+                        && todoTask.IsDeleted == isDeleted)
                     .Select(todoTask => new TodoTaskResponseDto() {
                         Id = todoTask.Id,
                         Name = todoTask.Name,
@@ -91,6 +98,7 @@ namespace todo_app_backend.Repositories
                         Date = todoTask.Date,
                         IsImportant = todoTask.IsImportant,
                         IsDone = todoTask.IsDone,
+                        IsDeleted = todoTask.IsDeleted,
                         UserId = todoTask.UserId,
                         CreatedAt = todoTask.CreatedAt,
                         Tags = todoTask.TodoTaskTags.Select(todoTaskTag => todoTaskTag.Tag.Name).ToList(),
@@ -105,7 +113,9 @@ namespace todo_app_backend.Repositories
                     .Include(t => t.TodoTaskTags)
                     .ThenInclude(t => t.Tag)
                     .Include(t => t.TodoSubtasks)
-                    .Where(todoTask => todoTask.UserId == userId && todoTask.IsDone == true)
+                    .Where(todoTask => todoTask.UserId == userId 
+                        && todoTask.IsDone == true
+                        && todoTask.IsDeleted == isDeleted)
                     .Select(todoTask => new TodoTaskResponseDto() {
                         Id = todoTask.Id,
                         Name = todoTask.Name,
@@ -113,6 +123,7 @@ namespace todo_app_backend.Repositories
                         Date = todoTask.Date,
                         IsImportant = todoTask.IsImportant,
                         IsDone = todoTask.IsDone,
+                        IsDeleted = todoTask.IsDeleted,
                         UserId = todoTask.UserId,
                         CreatedAt = todoTask.CreatedAt,
                         Tags = todoTask.TodoTaskTags.Select(todoTaskTag => todoTaskTag.Tag.Name).ToList(),
@@ -127,7 +138,9 @@ namespace todo_app_backend.Repositories
                     .Include(t => t.TodoTaskTags)
                     .ThenInclude(t => t.Tag)
                     .Include(t => t.TodoSubtasks)
-                    .Where(todoTask => todoTask.UserId == userId && todoTask.IsImportant == true)
+                    .Where(todoTask => todoTask.UserId == userId 
+                        && todoTask.IsImportant == true
+                        && todoTask.IsDeleted == isDeleted)
                     .Select(todoTask => new TodoTaskResponseDto() {
                         Id = todoTask.Id,
                         Name = todoTask.Name,
@@ -135,6 +148,7 @@ namespace todo_app_backend.Repositories
                         Date = todoTask.Date,
                         IsImportant = todoTask.IsImportant,
                         IsDone = todoTask.IsDone,
+                        IsDeleted = todoTask.IsDeleted,
                         UserId = todoTask.UserId,
                         CreatedAt = todoTask.CreatedAt,
                         Tags = todoTask.TodoTaskTags.Select(todoTaskTag => todoTaskTag.Tag.Name).ToList(),
@@ -149,31 +163,6 @@ namespace todo_app_backend.Repositories
             }
         }
 
-        // public async Task<TodoTaskResponseDto?> GetDetailsAsync(string id) {
-        //     var todoTask = await appDbContext.TodoTask
-        //         .Include(t => t.TodoTaskTags)
-        //         .ThenInclude(t => t.Tag)
-        //         .Include(t => t.TodoSubtasks)
-        //         .Select(todoTask => new TodoTaskResponseDto() {
-        //             Id = todoTask.Id,
-        //             Name = todoTask.Name,
-        //             Description = todoTask.Description,
-        //             Date = todoTask.Date,
-        //             IsImportant = todoTask.IsImportant,
-        //             IsDone = todoTask.IsDone,
-        //             UserId = todoTask.UserId,
-        //             CreatedAt = todoTask.CreatedAt,
-        //             Tags = todoTask.TodoTaskTags.Select(todoTaskTag => todoTaskTag.Tag.Name).ToList(),
-        //             TodoSubTasks = todoTask.TodoSubtasks.Select(todoSubtask => new TodoSubtaskDto() {
-        //                 Name = todoSubtask.Name,
-        //                 IsDone = todoSubtask.IsDone
-        //             }).ToList()
-        //         })
-        //         .FirstOrDefaultAsync(todoTask => todoTask.Id == id);
-
-        //     return todoTask;
-        // }
-
         public async Task<TodoTaskResponseDto?> GetDetailsWithSearchAsync(string? id, string? search) {
             if (id is not null && search is null) {
                 return await appDbContext.TodoTask.Include(t => t.TodoTaskTags)
@@ -186,6 +175,7 @@ namespace todo_app_backend.Repositories
                     Date = todoTask.Date,
                     IsImportant = todoTask.IsImportant,
                     IsDone = todoTask.IsDone,
+                    IsDeleted = todoTask.IsDeleted,
                     UserId = todoTask.UserId,
                     CreatedAt = todoTask.CreatedAt,
                     Tags = todoTask.TodoTaskTags.Select(todoTaskTag => todoTaskTag.Tag.Name).ToList(),
@@ -207,6 +197,7 @@ namespace todo_app_backend.Repositories
                     Date = todoTask.Date,
                     IsImportant = todoTask.IsImportant,
                     IsDone = todoTask.IsDone,
+                    IsDeleted = todoTask.IsDeleted,
                     UserId = todoTask.UserId,
                     CreatedAt = todoTask.CreatedAt,
                     Tags = todoTask.TodoTaskTags.Select(todoTaskTag => todoTaskTag.Tag.Name).ToList(),
@@ -234,6 +225,7 @@ namespace todo_app_backend.Repositories
             todoTask.Date = todoTaskUpdateDto.Date ?? todoTask.Date;
             todoTask.IsImportant = todoTaskUpdateDto.IsImportant ?? todoTask.IsImportant;
             todoTask.IsDone = todoTaskUpdateDto.IsDone ?? todoTask.IsDone;
+            todoTask.IsDeleted = todoTaskUpdateDto.IsDeleted ?? todoTask.IsDeleted;
             todoTask.UserId = todoTaskUpdateDto.UserId ?? todoTask.UserId;
             todoTask.CreatedAt = todoTask.CreatedAt;
 
