@@ -6,7 +6,12 @@ namespace todo_app_backend.DTOs.Auth
     {
         [Required(ErrorMessage = "{0} is required.")]
         [StringLength(maximumLength: 50, ErrorMessage = "{0} must be maximum {1} characters.")]
-        public string Fullname { get; set; } = string.Empty;
+        public string FirstName { get; set; } = string.Empty;
+
+        public string? LastName { get; set; } = string.Empty;
+        
+        [StringLength(maximumLength: 10, ErrorMessage = "{0} must be maximum {1} characters.")]
+        public string Username { get; set; } = string.Empty;
         
         [Required(ErrorMessage = "{0} is required.")]
         public string Email { get; set; } = string.Empty;

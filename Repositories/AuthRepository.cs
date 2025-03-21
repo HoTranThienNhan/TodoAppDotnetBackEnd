@@ -37,7 +37,9 @@ namespace todo_app_backend.Repositories
             var hashedPassword = new PasswordHasher<User>().HashPassword(user, userRegisterDto.Password);
 
             user.Id = Guid.NewGuid().ToString();
-            user.Fullname = userRegisterDto.Fullname;
+            user.FirstName = userRegisterDto.FirstName;
+            user.LastName = userRegisterDto.LastName;
+            user.Username = userRegisterDto.Username;
             user.Email = userRegisterDto.Email;
             user.Phone = userRegisterDto.Phone;
             user.Password = hashedPassword;
@@ -139,7 +141,9 @@ namespace todo_app_backend.Repositories
 
             return new UserInfoDto() {
                 Id = user.Id,
-                Fullname = user.Fullname,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Username = user.Username,
                 Email = user.Email,
                 Phone = user.Phone,
                 IsActive = user.IsActive
@@ -153,7 +157,9 @@ namespace todo_app_backend.Repositories
                 return null;
             }
 
-            user.Fullname = userInfoDto.Fullname ?? user.Fullname;
+            user.FirstName = userInfoDto.FirstName ?? user.FirstName;
+            user.LastName = userInfoDto.LastName ?? user.LastName;
+            user.Username = userInfoDto.Username ?? user.Username;
             user.Email = userInfoDto.Email ?? user.Email;
             user.Phone = userInfoDto.Phone ?? user.Phone;
             user.IsActive = userInfoDto.IsActive ?? user.IsActive;
@@ -162,7 +168,8 @@ namespace todo_app_backend.Repositories
 
             return new UserInfoDto() {
                 Id = user.Id,
-                Fullname = user.Fullname,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
                 Email = user.Email,
                 Phone = user.Phone,
                 IsActive = user.IsActive
