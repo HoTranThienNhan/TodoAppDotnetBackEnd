@@ -1,5 +1,6 @@
 using todo_app_backend.Models;
 using todo_app_backend.DTOs.Auth;
+using todo_app_backend.Helpers;
 
 namespace todo_app_backend.Contracts
 {
@@ -13,7 +14,19 @@ namespace todo_app_backend.Contracts
             throw new NotImplementedException();
         }
 
-        Task<User?> RegisterAsync(UserRegisterDto userRegisterDto) {
+        Task<APIResponse?> RegisterAsync(UserRegisterDto userRegisterDto) {
+            throw new NotImplementedException();
+        }
+
+        Task<APIResponse?> AddOrUpdateOtp(string userEmail, string firstName) {
+            throw new NotImplementedException();
+        }
+
+        Task<string> ValidateOtp(string userEmail, string otpText) {
+            throw new NotImplementedException();
+        }
+
+        Task<User?> ConfirmRegisterAsync(UserRegisterConfirmationDto userRegisterConfirmationDto) {
             throw new NotImplementedException();
         }
 

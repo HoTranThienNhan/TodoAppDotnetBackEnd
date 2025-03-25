@@ -14,6 +14,7 @@ namespace todo_app_backend.Data
         public DbSet<TodoTask> TodoTask { get; set; }
         public DbSet<TodoTaskTag> TodoTaskTag { get; set; }
         public DbSet<TodoSubtask> TodoSubtask { get; set; }
+        public DbSet<Otp> Otp { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

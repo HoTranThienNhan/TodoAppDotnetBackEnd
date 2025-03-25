@@ -5,6 +5,7 @@ using todo_app_backend.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using todo_app_backend.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -22,5 +22,7 @@ namespace todo_app_backend.DTOs.Auth
 
         [Required(ErrorMessage = "{0} is required.")]
         public string Password { get; set; } = string.Empty;
+
+        public string? OtpText { get; set; } = string.Empty;
     }
 }
