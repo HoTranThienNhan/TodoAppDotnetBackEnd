@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using todo_app_backend.Contracts;
 using todo_app_backend.DTOs.Auth;
@@ -7,6 +8,7 @@ namespace todo_app_backend.Controllers
 {
     [ApiController]
     [Route("/api/v1/[controller]")]
+    [EnableCors("AllowSpecificOrigins")] 
 
     public class AuthController(IAuthRepository authRepository) : ControllerBase
     {

@@ -34,6 +34,15 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ),
         };
     });
+builder.Services.AddCors(options => {
+    options.AddPolicy("AllowSpecificOrigins", policy =>
+    {
+        policy.WithOrigins("http://localhost:4200") 
+              .AllowAnyHeader()  
+              .AllowAnyMethod(); 
+    });
+});
+
 
 var app = builder.Build();
 
@@ -45,6 +54,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+app.UseCors("AllowSpecificOrigins");
 app.UseHttpsRedirection();
 app.UseAuthorization();
 
