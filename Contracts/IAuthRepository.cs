@@ -14,11 +14,11 @@ namespace todo_app_backend.Contracts
             throw new NotImplementedException();
         }
 
-        Task<APIResponse?> RegisterAsync(UserRegisterDto userRegisterDto) {
+        Task<APIResponse?> RegisterAsync(string userEmail, string otpText) {
             throw new NotImplementedException();
         }
 
-        Task<APIResponse?> AddOrUpdateOtp(string userEmail, string firstName) {
+        Task<APIResponse?> AddOrUpdateOtp(UserRegisterDto userRegisterDto) {
             throw new NotImplementedException();
         }
 
@@ -27,6 +27,10 @@ namespace todo_app_backend.Contracts
         }
 
         Task<User?> ConfirmRegisterAsync(UserRegisterConfirmationDto userRegisterConfirmationDto) {
+            throw new NotImplementedException();
+        }
+
+        Task<APIResponse?> ResendOtp(string userEmail, string userFirstName) {
             throw new NotImplementedException();
         }
 

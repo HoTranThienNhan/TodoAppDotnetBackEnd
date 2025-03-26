@@ -5,7 +5,8 @@ namespace todo_app_backend.Helpers
 {
     public class OAuth
     {
-        public static async Task<UserCredential> GetCredentialAsync() {
+        public static async Task<UserCredential> GetCredentialAsync()
+        {
             string[] scopes = { "https://mail.google.com/" };
 
             using var stream = new FileStream("client_secret.json", FileMode.Open, FileAccess.Read);
@@ -13,13 +14,20 @@ namespace todo_app_backend.Helpers
 
             // remove token.json/Google.Apis.Auth.OAuth2.Responses.TokenResponse-user data to clear tokens cache
 
-            return await GoogleWebAuthorizationBroker.AuthorizeAsync(
+            var credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
                 GoogleClientSecrets.FromStream(stream).Secrets,
                 scopes,
                 "user",
                 CancellationToken.None,
                 new FileDataStore(credPath, true)
             );
+
+            if (credential.Token.IsStale)
+            {
+                await credential.RefreshTokenAsync(CancellationToken.None);
+            }
+
+            return credential;
         }
     }
 }

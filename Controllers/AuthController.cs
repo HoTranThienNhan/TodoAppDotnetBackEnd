@@ -14,14 +14,25 @@ namespace todo_app_backend.Controllers
     {
         [HttpPost("register")]
         public async Task<ActionResult> Register(UserRegisterDto userRegisterDto) {
-            var response = await authRepository.AddOrUpdateOtp(userRegisterDto.Email, userRegisterDto.FirstName);
+            var response = await authRepository.AddOrUpdateOtp(userRegisterDto);
 
             return Ok(response);
         }
 
-        [HttpPost("confirmRegister")]
-        public async Task<ActionResult> ConfirmRegister(UserRegisterDto userRegisterDto) {
-            var response = await authRepository.RegisterAsync(userRegisterDto);
+        [HttpPost("confirmEmailRegister")]
+        public async Task<ActionResult> ConfirmRegister(UserConfirmEmailRegisterDto userConfirmEmailRegisterDto) {
+            var response = await authRepository.RegisterAsync(userConfirmEmailRegisterDto.Email, userConfirmEmailRegisterDto.OtpText);
+
+            if (!response!.Success) {
+                return BadRequest(response);
+            } else {
+                return Ok(response);
+            }
+        }
+
+        [HttpPost("resendCode")]
+        public async Task<ActionResult> ResendOtp(UserResendOTPDto userResendOTPDto) {
+            var response = await authRepository.ResendOtp(userResendOTPDto.Email, userResendOTPDto.FirstName);
 
             if (!response!.Success) {
                 return BadRequest(response);

@@ -40,10 +40,14 @@ namespace todo_app_backend.Repositories
         {
             var otp = await appDbContext.Otp.FirstOrDefaultAsync(otp => otp.UserEmail == userEmail && otp.Text == otpText);
 
-            if (otp is null) {
+            if (otp is null)
+            {
                 return "wrong";
-            } else {
-                if (otp.ExpiryTime <= DateTime.Now) {
+            }
+            else
+            {
+                if (otp.ExpiryTime <= DateTime.Now)
+                {
                     return "expired";
                 }
                 return "success";
@@ -51,18 +55,21 @@ namespace todo_app_backend.Repositories
         }
 
         //
-        public async Task<string> GetOAuthAccessTokenAsync() {
+        public async Task<string> GetOAuthAccessTokenAsync()
+        {
             var credential = await OAuth.GetCredentialAsync();
             return credential.Token.AccessToken;
         }
 
-        public async Task<string> GetOAuthRefreshTokenAsync() {
+        public async Task<string> GetOAuthRefreshTokenAsync()
+        {
             var credential = await OAuth.GetCredentialAsync();
             return credential.Token.RefreshToken;
         }
 
         //
-        public async Task SendEmailAsync(string otpText, string firstName, string emailReceiver) {
+        public async Task SendEmailAsync(string otpText, string firstName, string emailReceiver)
+        {
             string accessToken = await GetOAuthAccessTokenAsync();
             Console.WriteLine($"Access Token: {accessToken}");
 
@@ -70,7 +77,8 @@ namespace todo_app_backend.Repositories
             email.From.Add(new MailboxAddress("Todo Task App", "todotaskapp.mail@gmail.com"));
             email.To.Add(MailboxAddress.Parse(emailReceiver));
             email.Subject = "Email Confirmation";
-            email.Body = new TextPart(TextFormat.Html) {
+            email.Body = new TextPart(TextFormat.Html)
+            {
                 Text = $@"<div>
                             <div>Hi {firstName},</div>
                             <br/>
@@ -102,47 +110,60 @@ namespace todo_app_backend.Repositories
             await smtp.DisconnectAsync(true);
         }
 
-        public async Task<APIResponse?> RegisterAsync(UserRegisterDto userRegisterDto)
+        public async Task<APIResponse?> RegisterAsync(string userEmail, string otpText)
         {
             APIResponse response = new APIResponse();
-            string otpValidateMessage = await ValidateOtp(userRegisterDto.Email, userRegisterDto.OtpText ?? "");
+            string otpValidateMessage = await ValidateOtp(userEmail, otpText ?? "");
 
-            if (otpValidateMessage == "success") {
-                if (await appDbContext.User.AnyAsync(user => user.Email == userRegisterDto.Email))
+            if (otpValidateMessage == "success")
+            {
+                // convert Temp User to User
+                var tempUser = await appDbContext.TempUser.FirstOrDefaultAsync(user => user.Email == userEmail);
+                var user = new User();
+
+                if (tempUser is not null)
+                {
+                    user.Id = tempUser.Id;
+                    user.FirstName = tempUser.FirstName;
+                    user.LastName = tempUser.LastName;
+                    user.Username = tempUser.Username;
+                    user.Email = tempUser.Email;
+                    user.Phone = tempUser.Phone;
+                    user.Password = tempUser.Password;
+                    user.IsActive = tempUser.IsActive;
+                    user.CreatedAt = tempUser.CreatedAt;
+
+                    await appDbContext.User.AddAsync(user);
+
+                    // delete Temp User
+                    appDbContext.TempUser.Remove(tempUser);
+                }
+                else
                 {
                     response.Success = false;
-                    response.Message = "User is already existed!";
+                    response.Message = "Temp User does not exist!";
 
                     return response;
                 }
 
-                var user = new User();
-                var hashedPassword = new PasswordHasher<User>().HashPassword(user, userRegisterDto.Password);
-
-                user.Id = Guid.NewGuid().ToString();
-                user.FirstName = userRegisterDto.FirstName;
-                user.LastName = userRegisterDto.LastName;
-                user.Username = userRegisterDto.Username;
-                user.Email = userRegisterDto.Email;
-                user.Phone = userRegisterDto.Phone;
-                user.Password = hashedPassword;
-                user.IsActive = true;
-                user.CreatedAt = DateTime.UtcNow;
-
-                await appDbContext.User.AddAsync(user);
                 await appDbContext.SaveChangesAsync();
 
-                return response = new APIResponse() {
+                return response = new APIResponse()
+                {
                     Success = true,
                     Message = "Register successfully!",
                     Data = user
                 };
-            } else if (otpValidateMessage == "wrong") {
+            }
+            else if (otpValidateMessage == "wrong")
+            {
                 response.Success = false;
                 response.Message = "Wrong OTP!";
 
                 return response;
-            } else {
+            }
+            else
+            {
                 response.Success = false;
                 response.Message = "OTP is expired!";
 
@@ -157,10 +178,10 @@ namespace todo_app_backend.Repositories
             return randomNumberGenerator;
         }
 
-        public async Task<APIResponse?> AddOrUpdateOtp(string userEmail, string firstName)
+        public async Task<APIResponse?> AddOrUpdateOtp(UserRegisterDto userRegisterDto)
         {
             APIResponse response = new APIResponse();
-            var otp = await appDbContext.Otp.FirstOrDefaultAsync(otp => otp.UserEmail == userEmail);
+            var otp = await appDbContext.Otp.FirstOrDefaultAsync(otp => otp.UserEmail == userRegisterDto.Email);
 
             if (otp is null)
             {
@@ -170,7 +191,7 @@ namespace todo_app_backend.Repositories
                     Text = GenerateOtp(),
                     ExpiryTime = DateTime.Now.AddMinutes(5),
                     CreatedAt = DateTime.Now,
-                    UserEmail = userEmail
+                    UserEmail = userRegisterDto.Email
                 };
 
                 await appDbContext.Otp.AddAsync(otp);
@@ -184,15 +205,77 @@ namespace todo_app_backend.Repositories
                 otp.UserEmail = otp.UserEmail;
             }
 
-            await SendEmailAsync(otp.Text, firstName, otp.UserEmail);
+            await SendEmailAsync(otp.Text, userRegisterDto.FirstName, otp.UserEmail);
+
+            // Add Temp User
+            if (await appDbContext.TempUser.AnyAsync(user => user.Email == userRegisterDto.Email)
+                || await appDbContext.User.AnyAsync(user => user.Email == userRegisterDto.Email))
+            {
+                response.Success = false;
+                response.Message = "User is already existed!";
+
+                return response;
+            }
+
+            var tempUser = new TempUser();
+            var hashedPassword = new PasswordHasher<TempUser>().HashPassword(tempUser, userRegisterDto.Password);
+
+            tempUser.Id = Guid.NewGuid().ToString();
+            tempUser.FirstName = userRegisterDto.FirstName;
+            tempUser.LastName = userRegisterDto.LastName;
+            tempUser.Username = userRegisterDto.Username;
+            tempUser.Email = userRegisterDto.Email;
+            tempUser.Phone = userRegisterDto.Phone;
+            tempUser.Password = hashedPassword;
+            tempUser.IsActive = true;
+            tempUser.CreatedAt = DateTime.UtcNow;
+
+            await appDbContext.TempUser.AddAsync(tempUser);
 
             await appDbContext.SaveChangesAsync();
 
-            return response = new APIResponse() {
+            return response = new APIResponse()
+            {
                 Success = true,
-                Message = "Update OTP successfully!",
-                Data = otp
+                Message = "Update OTP successfully!"
             };
+        }
+
+        public async Task<APIResponse?> ResendOtp(string userEmail, string userFirstName)
+        {
+            if (await appDbContext.TempUser.AnyAsync(user => user.Email == userEmail))
+            {
+                // update OTP
+                var otp = await appDbContext.Otp.FirstOrDefaultAsync(otp => otp.UserEmail == userEmail);
+
+                if (otp is not null) {
+                    otp.Id = otp.Id;
+                    otp.Text = GenerateOtp();
+                    otp.ExpiryTime = DateTime.Now.AddMinutes(5);
+                    otp.CreatedAt = DateTime.Now;
+                    otp.UserEmail = otp.UserEmail;
+
+                    await appDbContext.SaveChangesAsync();
+
+                    await SendEmailAsync(otp.Text, userFirstName, userEmail);
+                }
+
+                return new APIResponse()
+                {
+                    Success = true,
+                    Message = "User email confirmation request is resent!"
+                };
+
+            }
+            else
+            {
+                return new APIResponse()
+                {
+                    Success = false,
+                    Message = "User email confirmation request does not exist!"
+                };
+            }
+
         }
 
         public async Task<UserTokensDto?> LoginAsync(UserLoginDto userLoginDto)

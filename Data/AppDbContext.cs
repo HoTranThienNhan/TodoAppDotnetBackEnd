@@ -10,6 +10,7 @@ namespace todo_app_backend.Data
         }
 
         public DbSet<User> User { get; set; }
+        public DbSet<TempUser> TempUser { get; set; }
         public DbSet<Tag> Tag { get; set; }
         public DbSet<TodoTask> TodoTask { get; set; }
         public DbSet<TodoTaskTag> TodoTaskTag { get; set; }
