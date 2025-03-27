@@ -26,6 +26,7 @@ builder.Services.AddScoped<ITagService, TagService>();
 builder.Services.AddScoped<ITodoTaskRepository, TodoTaskRepository>();
 builder.Services.AddScoped<ITodoTaskService, TodoTaskService>();
 builder.Services.AddScoped<ITodoSubtaskRepository, TodoSubtaskRepository>();
+builder.Services.AddScoped<ITodoSubtaskService, TodoSubtaskService>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(option => {
         option.TokenValidationParameters = new TokenValidationParameters{

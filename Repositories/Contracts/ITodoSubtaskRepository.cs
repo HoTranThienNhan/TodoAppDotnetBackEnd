@@ -5,11 +5,15 @@ namespace todo_app_backend.Repositories.Contracts
 {
     public interface ITodoSubtaskRepository
     {
-        Task<TodoSubtaskAddDto?> AddAsync(TodoSubtaskAddDto todoSubtaskAddDto) {
+        Task AddAsync(TodoSubtask todoSubtask) {
             throw new NotImplementedException();
         } 
 
-        Task<TodoSubtask?> UpdateAsync(TodoSubtaskUpdateDto todoSubtaskUpdateDto) {
+        Task<TodoSubtask?> GetByIdAsync(string id) {
+            throw new NotImplementedException();
+        }
+
+        Task UpdateAsync(TodoSubtask todoSubtask, TodoSubtaskUpdateDto todoSubtaskUpdateDto) {
             throw new NotImplementedException();
         } 
     }

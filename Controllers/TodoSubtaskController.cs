@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using todo_app_backend.DTOs.TodoSubtask;
-using todo_app_backend.Repositories.Contracts;
+using todo_app_backend.Services.Contracts;
 
 namespace todo_app_backend.Controllers
 {
@@ -9,25 +9,25 @@ namespace todo_app_backend.Controllers
     [Route("/api/v1/[controller]")]
     [Authorize]
 
-    public class TodoSubtaskController(ITodoSubtaskRepository todoSubtaskRepository, ITodoTaskRepository todoTaskRepository) : ControllerBase
+    public class TodoSubtaskController(ITodoSubtaskService todoSubtaskService, ITodoTaskService todoTaskService) : ControllerBase
     {
         [HttpPost("add")]
         public async Task<ActionResult> AddTodoSubtask([FromBody] TodoSubtaskAddDto todoSubtaskAddDto) {
-            if (!await todoTaskRepository.FindAnyAsync(todoSubtaskAddDto.TodoTaskId)) {
+            if (!await todoTaskService.FindAnyAsync(todoSubtaskAddDto.TodoTaskId)) {
                 return BadRequest("Todo task Id does not exist.");
             }
 
-            var todoSubtask = await todoSubtaskRepository.AddAsync(todoSubtaskAddDto);
+            var todoSubtask = await todoSubtaskService.AddAsync(todoSubtaskAddDto);
 
             return Ok(todoSubtask);
         }
 
         [HttpPost("update")]
         public async Task<ActionResult> UpdateTodoSubtask([FromBody] TodoSubtaskUpdateDto todoSubtaskUpdateDto) {
-            var todoSubtask = await todoSubtaskRepository.UpdateAsync(todoSubtaskUpdateDto);
+            var todoSubtask = await todoSubtaskService.UpdateAsync(todoSubtaskUpdateDto);
 
-            if (todoSubtask is null) {
-                return BadRequest("Todo subtask does not exist.");
+            if (todoSubtask!.Success == false) {
+                return BadRequest(todoSubtask);
             }
 
             return Ok(todoSubtask);
