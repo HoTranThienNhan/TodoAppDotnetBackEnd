@@ -34,11 +34,11 @@ namespace todo_app_backend.Contracts
             throw new NotImplementedException();
         }
 
-        Task<UserTokensDto?> LoginAsync(UserLoginDto userLoginDto) {
+        Task<string?> LoginAsync(UserLoginDto userLoginDto) {
             throw new NotImplementedException();
         }
 
-        Task<UserTokensDto?> RefreshTokenAsync(UserRefreshTokenDto userRefreshTokenDto) {
+        Task<string?> RefreshTokenAsync(UserRefreshTokenDto userRefreshTokenDto) {
             throw new NotImplementedException();
         }
 

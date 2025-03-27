@@ -17,7 +17,7 @@ using MailKit.Security;
 
 namespace todo_app_backend.Repositories
 {
-    public class AuthRepository(AppDbContext appDbContext, IConfiguration configuration) : IAuthRepository
+    public class AuthRepository(AppDbContext appDbContext, IConfiguration configuration, IHttpContextAccessor httpContextAccessor) : IAuthRepository
     {
         public async Task<bool> FindAnyByIdAsync(string userId)
         {
@@ -248,7 +248,8 @@ namespace todo_app_backend.Repositories
                 // update OTP
                 var otp = await appDbContext.Otp.FirstOrDefaultAsync(otp => otp.UserEmail == userEmail);
 
-                if (otp is not null) {
+                if (otp is not null)
+                {
                     otp.Id = otp.Id;
                     otp.Text = GenerateOtp();
                     otp.ExpiryTime = DateTime.Now.AddMinutes(5);
@@ -278,7 +279,7 @@ namespace todo_app_backend.Repositories
 
         }
 
-        public async Task<UserTokensDto?> LoginAsync(UserLoginDto userLoginDto)
+        public async Task<string?> LoginAsync(UserLoginDto userLoginDto)
         {
             var user = await appDbContext.User.FirstOrDefaultAsync(user => user.Email == userLoginDto.Email);
 
@@ -297,13 +298,21 @@ namespace todo_app_backend.Repositories
             return tokens;
         }
 
-        public async Task<UserTokensDto> CreateTokenResponse(User user)
+        public async Task<string?> CreateTokenResponse(User user)
         {
-            return new UserTokensDto
+            string accessToken = CreateToken(user!);
+            string refreshToken = await GenerateAndSaveRefreshTokenAsync(user!);
+
+            // Store refresh token in HttpOnly Secure Cookie
+            httpContextAccessor.HttpContext?.Response.Cookies.Append("refreshToken", refreshToken, new CookieOptions
             {
-                AccessToken = CreateToken(user!),
-                RefreshToken = await GenerateAndSaveRefreshTokenAsync(user!)
-            };
+                HttpOnly = true,
+                Secure = true, // Only for HTTPS
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTime.UtcNow.AddDays(7) // Refresh token expiry
+            });
+
+            return accessToken;
         }
 
         private string CreateToken(User user)
@@ -324,7 +333,7 @@ namespace todo_app_backend.Repositories
                 issuer: JwtSetting.GetSection("Issuer").Value!,
                 audience: JwtSetting.GetSection("Audience").Value!,
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(30),
+                expires: DateTime.UtcNow.AddMinutes(2),
                 signingCredentials: creds
             );
 
@@ -348,8 +357,12 @@ namespace todo_app_backend.Repositories
             return Convert.ToBase64String(randomNumber);
         }
 
-        private async Task<User?> ValidateRefreshTokenAsync(string userId, string refreshToken)
+        private async Task<User?> ValidateRefreshTokenAsync(string userId)
         {
+            if (!httpContextAccessor.HttpContext!.Request.Cookies.TryGetValue("refreshToken", out var refreshToken)) {
+                return null;
+            }
+
             var user = await appDbContext.User.FindAsync(userId);
             if (user is null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
             {
@@ -358,9 +371,9 @@ namespace todo_app_backend.Repositories
             return user;
         }
 
-        public async Task<UserTokensDto?> RefreshTokenAsync(UserRefreshTokenDto userRefreshTokenDto)
+        public async Task<string?> RefreshTokenAsync(UserRefreshTokenDto userRefreshTokenDto)
         {
-            var user = await ValidateRefreshTokenAsync(userRefreshTokenDto.UserId!, userRefreshTokenDto.RefreshToken);
+            var user = await ValidateRefreshTokenAsync(userRefreshTokenDto.UserId!);
 
             if (user is null)
             {

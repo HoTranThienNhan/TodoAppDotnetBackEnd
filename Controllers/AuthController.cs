@@ -47,15 +47,15 @@ namespace todo_app_backend.Controllers
                 return BadRequest("User is inactive.");
             }
 
-            var tokens = await authRepository.LoginAsync(userLoginDto);
+            var accessToken = await authRepository.LoginAsync(userLoginDto);
 
-            if (tokens is null) {
+            if (accessToken is null) {
                 return BadRequest("Invalid email or password.");
             }
 
             UserLoginResponseDto result = new UserLoginResponseDto() {
                 Email = userLoginDto.Email,
-                Tokens = tokens
+                AccessToken = accessToken
             };
 
             return Ok(result);
@@ -64,17 +64,21 @@ namespace todo_app_backend.Controllers
         [HttpPost("refreshToken")]
         [Authorize]
         public async Task<ActionResult> RefreshToken(UserRefreshTokenDto userRefreshTokenDt) {
-            var tokens = await authRepository.RefreshTokenAsync(userRefreshTokenDt);
+            var accessToken = await authRepository.RefreshTokenAsync(userRefreshTokenDt);
 
-            if (tokens is null) {
+            if (accessToken is null) {
                 return BadRequest("Invalid User ID or Refresh Token");
             }
 
-            return Ok(tokens);
+            UserRefreshTokenResponseDto result = new UserRefreshTokenResponseDto() {
+                AccessToken = accessToken
+            };
+
+            return Ok(result);
         }
 
-        [HttpGet("profile")]
         [Authorize]
+        [HttpGet("profile")]
         public async Task<ActionResult> GetProfileByEmail([FromQuery] string email) {
             var user = await authRepository.GetByEmailAsync(email);
 

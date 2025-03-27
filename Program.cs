@@ -30,6 +30,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = true,
             ValidAudience = JwtSettings.GetSection("Audience").Value,
             ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero, 
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(JwtSettings.GetSection("SecurityKey").Value!)
@@ -44,6 +45,7 @@ builder.Services.AddCors(options => {
               .AllowAnyMethod(); 
     });
 });
+builder.Services.AddHttpContextAccessor();
 
 
 var app = builder.Build();
@@ -58,6 +60,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("AllowSpecificOrigins");
 app.UseHttpsRedirection();
+app.UseAuthentication(); 
 app.UseAuthorization();
 
 app.Run();
