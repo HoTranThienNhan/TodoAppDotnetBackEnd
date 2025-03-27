@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using todo_app_backend.DTOs.Auth;
-using todo_app_backend.Repositories.Contracts;
+using todo_app_backend.Services.Contracts;
 
 namespace todo_app_backend.Controllers
 {
@@ -10,18 +10,18 @@ namespace todo_app_backend.Controllers
     [Route("/api/v1/[controller]")]
     [EnableCors("AllowSpecificOrigins")] 
 
-    public class AuthController(IAuthRepository authRepository) : ControllerBase
+    public class AuthController(IAuthService authService) : ControllerBase
     {
         [HttpPost("register")]
         public async Task<ActionResult> Register(UserRegisterDto userRegisterDto) {
-            var response = await authRepository.AddOrUpdateOtp(userRegisterDto);
+            var response = await authService.AddOrUpdateOtp(userRegisterDto);
 
             return Ok(response);
         }
 
         [HttpPost("confirmEmailRegister")]
         public async Task<ActionResult> ConfirmRegister(UserConfirmEmailRegisterDto userConfirmEmailRegisterDto) {
-            var response = await authRepository.RegisterAsync(userConfirmEmailRegisterDto.Email, userConfirmEmailRegisterDto.OtpText);
+            var response = await authService.RegisterAsync(userConfirmEmailRegisterDto.Email, userConfirmEmailRegisterDto.OtpText);
 
             if (!response!.Success) {
                 return BadRequest(response);
@@ -32,7 +32,7 @@ namespace todo_app_backend.Controllers
 
         [HttpPost("resendCode")]
         public async Task<ActionResult> ResendOtp(UserResendOTPDto userResendOTPDto) {
-            var response = await authRepository.ResendOtp(userResendOTPDto.Email, userResendOTPDto.FirstName);
+            var response = await authService.ResendOtp(userResendOTPDto.Email, userResendOTPDto.FirstName);
 
             if (!response!.Success) {
                 return BadRequest(response);
@@ -43,47 +43,38 @@ namespace todo_app_backend.Controllers
 
         [HttpPost("login")]
         public async Task<ActionResult> Login(UserLoginDto userLoginDto) {
-            if (!await authRepository.CheckUserActiveAsync(userLoginDto.Email)) {
+            if (!await authService.CheckUserActiveAsync(userLoginDto.Email)) {
                 return BadRequest("User is inactive.");
             }
 
-            var accessToken = await authRepository.LoginAsync(userLoginDto);
+            var accessToken = await authService.LoginAsync(userLoginDto);
 
-            if (accessToken is null) {
-                return BadRequest("Invalid email or password.");
+            if (accessToken!.Success == false) {
+                return BadRequest(accessToken);
             }
 
-            UserLoginResponseDto result = new UserLoginResponseDto() {
-                Email = userLoginDto.Email,
-                AccessToken = accessToken
-            };
-
-            return Ok(result);
+            return Ok(accessToken);
         }
 
         [HttpPost("refreshToken")]
         [Authorize]
         public async Task<ActionResult> RefreshToken(UserRefreshTokenDto userRefreshTokenDt) {
-            var accessToken = await authRepository.RefreshTokenAsync(userRefreshTokenDt);
+            var accessToken = await authService.RefreshTokenAsync(userRefreshTokenDt);
 
-            if (accessToken is null) {
-                return BadRequest("Invalid User ID or Refresh Token");
+            if (accessToken!.Success == false) {
+                return BadRequest(accessToken);
             }
 
-            UserRefreshTokenResponseDto result = new UserRefreshTokenResponseDto() {
-                AccessToken = accessToken
-            };
-
-            return Ok(result);
+            return Ok(accessToken);
         }
 
         [Authorize]
         [HttpGet("profile")]
         public async Task<ActionResult> GetProfileByEmail([FromQuery] string email) {
-            var user = await authRepository.GetByEmailAsync(email);
+            var user = await authService.GetByEmailAsync(email);
 
-            if (user is null) {
-                return BadRequest("User does not exist.");
+            if (user!.Success == false) {
+                return BadRequest(user);
             }
 
             return Ok(user);
@@ -92,10 +83,10 @@ namespace todo_app_backend.Controllers
         [HttpPost("update")]
         [Authorize]
         public async Task<ActionResult> Update([FromBody] UserInfoDto userInfoDto) {
-            var user = await authRepository.UpdateAsync(userInfoDto);
+            var user = await authService.UpdateAsync(userInfoDto);
 
-            if (user is null) {
-                return BadRequest("User does not exist.");
+            if (user!.Success == false) {
+                return BadRequest(user);
             }
 
             return Ok(user);

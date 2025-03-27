@@ -1,52 +1,75 @@
 using todo_app_backend.Models;
 using todo_app_backend.DTOs.Auth;
-using todo_app_backend.Helpers;
 
 namespace todo_app_backend.Repositories.Contracts
 {
     public interface IAuthRepository
     {
-        Task<bool> FindAnyByIdAsync(string userId) {
+        Task<bool> FindAnyByIdAsync(string userId)
+        {
             throw new NotImplementedException();
         }
 
-        Task<bool> CheckUserActiveAsync(string userId) {
+        Task<bool> FindAnyByEmailAsync(string email)
+        {
             throw new NotImplementedException();
         }
 
-        Task<APIResponse?> RegisterAsync(string userEmail, string otpText) {
+        Task AddUserAsync(User user)
+        {
             throw new NotImplementedException();
         }
 
-        Task<APIResponse?> AddOrUpdateOtp(UserRegisterDto userRegisterDto) {
+        Task<User?> GetUserByEmailAsync(string email)
+        {
             throw new NotImplementedException();
         }
 
-        Task<string> ValidateOtp(string userEmail, string otpText) {
+        Task<User?> GetUserByIdAsync(string id) {
             throw new NotImplementedException();
         }
 
-        Task<User?> ConfirmRegisterAsync(UserRegisterConfirmationDto userRegisterConfirmationDto) {
+        Task<Otp?> GetOtpByEmailAndTextAsync(string? userEmail = null, string? otpText = null)
+        {
             throw new NotImplementedException();
         }
 
-        Task<APIResponse?> ResendOtp(string userEmail, string userFirstName) {
+        Task<bool> FindAnyTempUserByEmailAsync(string email)
+        {
             throw new NotImplementedException();
         }
 
-        Task<string?> LoginAsync(UserLoginDto userLoginDto) {
+        Task AddTempUserAsync(TempUser tempUser)
+        {
             throw new NotImplementedException();
         }
 
-        Task<string?> RefreshTokenAsync(UserRefreshTokenDto userRefreshTokenDto) {
+        Task DeleteTempUser(TempUser tempUser)
+        {
             throw new NotImplementedException();
         }
 
-        Task<UserInfoDto?> GetByEmailAsync(string email) {
+        Task AddOtpAsync(Otp otp)
+        {
             throw new NotImplementedException();
         }
 
-        Task<UserInfoDto?> UpdateAsync(UserInfoDto userInfoDto) {
+        Task<TempUser?> GetTempUserByEmail(string userEmail)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task UpdateOtpAsync(Otp otp)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task UpdateAsync(User user, UserInfoDto userInfoDto)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task SaveRefreshTokenAsync(User user, string refreshToken, int expiryDays = 7) {
             throw new NotImplementedException();
         }
     }
