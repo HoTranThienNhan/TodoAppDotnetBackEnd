@@ -7,7 +7,6 @@ using todo_app_backend.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using todo_app_backend.Contracts;
 using todo_app_backend.DTOs.Auth;
 using todo_app_backend.Helpers;
 using MimeKit;
@@ -333,7 +332,7 @@ namespace todo_app_backend.Repositories
                 issuer: JwtSetting.GetSection("Issuer").Value!,
                 audience: JwtSetting.GetSection("Audience").Value!,
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(2),
+                expires: DateTime.UtcNow.AddMinutes(30),
                 signingCredentials: creds
             );
 

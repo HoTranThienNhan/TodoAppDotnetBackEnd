@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using todo_app_backend.Contracts;
 using todo_app_backend.DTOs.Tag;
+using todo_app_backend.Repositories;
+using todo_app_backend.Services;
 
 namespace todo_app_backend.Controllers
 {
@@ -9,16 +10,18 @@ namespace todo_app_backend.Controllers
     [Route("/api/v1/[controller]")]
     [Authorize]
 
-    public class TagController(ITagRepository tagRepository) : ControllerBase
+    public class TagController(ITagService tagService) : ControllerBase
     {
         [HttpPost("add")]
         public async Task<ActionResult> AddTag(TagAddDto tagAddDto) {
 
-            if (await tagRepository.FindAnyByNameAsync(tagAddDto)) {
-                return BadRequest("Tag is already existed!");
+            var foundTag = await tagService.FindAnyByNameAsync(tagAddDto);
+
+            if (foundTag is not null) {
+                return BadRequest(foundTag);
             }
 
-            var tag = await tagRepository.AddAsync(tagAddDto);
+            var tag = await tagService.AddAsync(tagAddDto);
 
             return Ok(tag);
         }

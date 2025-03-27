@@ -1,11 +1,11 @@
 using System.Text;
-using todo_app_backend.Contracts;
 using todo_app_backend.Data;
 using todo_app_backend.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using todo_app_backend.Helpers;
+using todo_app_backend.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +20,7 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(buil
 builder.Services.AddControllers();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<ITagRepository, TagRepository>();
+builder.Services.AddScoped<ITagService, TagService>();
 builder.Services.AddScoped<ITodoTaskRepository, TodoTaskRepository>();
 builder.Services.AddScoped<ITodoSubtaskRepository, TodoSubtaskRepository>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

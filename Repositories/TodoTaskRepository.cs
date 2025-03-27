@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using todo_app_backend.Contracts;
 using todo_app_backend.Data;
 using todo_app_backend.DTOs.TodoSubtask;
 using todo_app_backend.DTOs.TodoTask;

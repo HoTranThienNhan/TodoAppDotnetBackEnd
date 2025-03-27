@@ -1,7 +1,7 @@
 using todo_app_backend.DTOs.TodoTask;
 using todo_app_backend.Models;
 
-namespace todo_app_backend.Contracts
+namespace todo_app_backend.Repositories
 {
     public interface ITodoTaskRepository
     {

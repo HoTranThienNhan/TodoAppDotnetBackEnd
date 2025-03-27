@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using todo_app_backend.Contracts;
 using todo_app_backend.DTOs.TodoTask;
+using todo_app_backend.Repositories;
 
 namespace todo_app_backend.Controllers
 {
