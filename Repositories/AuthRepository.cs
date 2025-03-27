@@ -13,6 +13,7 @@ using MimeKit;
 using MimeKit.Text;
 using MailKit.Net.Smtp;
 using MailKit.Security;
+using todo_app_backend.Repositories.Contracts;
 
 namespace todo_app_backend.Repositories
 {

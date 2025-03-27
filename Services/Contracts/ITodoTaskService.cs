@@ -1,27 +1,27 @@
 using todo_app_backend.DTOs.TodoTask;
-using todo_app_backend.Models;
+using todo_app_backend.Helpers;
 
-namespace todo_app_backend.Repositories
+namespace todo_app_backend.Services.Contracts
 {
-    public interface ITodoTaskRepository
+    public interface ITodoTaskService
     {
         Task<bool> FindAnyAsync(string id) {
             throw new NotImplementedException();
         }
 
-        Task<TodoTask?> AddAsync(TodoTaskAddDto todoTaskAddDto) {
+        Task<APIResponse?> AddAsync(TodoTaskAddDto todoTaskAddDto) {
             throw new NotImplementedException();
         }
 
-        Task<List<TodoTaskResponseDto>> GetAllWithFilterAndSearchByUserIdAsync(string? userId, string? filter, string? search, bool? isDeleted) {
+        Task<APIResponse?> GetAllWithFilterAndSearchByUserIdAsync(string? userId, string? filter, string? search, bool? isDeleted) {
             throw new NotImplementedException();
         }
 
-        Task<TodoTaskResponseDto?> GetDetailsAsync(string id) {
+        Task<APIResponse?> GetDetailsAsync(string id) {
             throw new NotImplementedException();
         }
 
-        Task<TodoTask?> UpdateAsync(TodoTaskUpdateDto todoTaskUpdateDto) {
+        Task<APIResponse?> UpdateAsync(TodoTaskUpdateDto todoTaskUpdateDto) {
             throw new NotImplementedException();
         }
 

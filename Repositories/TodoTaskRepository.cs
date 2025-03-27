@@ -4,6 +4,7 @@ using todo_app_backend.DTOs.TodoSubtask;
 using todo_app_backend.DTOs.TodoTask;
 using todo_app_backend.Enums.TodoTask;
 using todo_app_backend.Models;
+using todo_app_backend.Repositories.Contracts;
 
 namespace todo_app_backend.Repositories
 {
@@ -13,31 +14,18 @@ namespace todo_app_backend.Repositories
             return await appDbContext.TodoTask.AnyAsync(todoTask => todoTask.Id == id);
         }
 
-        public async Task<TodoTask?> AddAsync(TodoTaskAddDto todoTaskAddDto) {
-            var todoTask = new TodoTask() {
-                Id = Guid.NewGuid().ToString(),
-                Name = todoTaskAddDto.Name,
-                Description = todoTaskAddDto.Description,
-                Date = todoTaskAddDto.Date ?? DateTime.UtcNow,
-                IsImportant = todoTaskAddDto.IsImportant ?? false ,
-                IsDone = todoTaskAddDto.IsDone ?? false,
-                IsDeleted = todoTaskAddDto.IsDeleted ?? false,
-                UserId = todoTaskAddDto.UserId,
-                CreatedAt = DateTime.UtcNow
-            };
+        public async Task<TodoTask?> GetByIdAsync(string id) {
+            return await appDbContext.TodoTask.FirstOrDefaultAsync(todoTask => todoTask.Id == id);
+        }
+
+        public async Task AddAsync(TodoTask todoTask) {
             await appDbContext.TodoTask.AddAsync(todoTask);
             await appDbContext.SaveChangesAsync();
+        }
 
-            foreach(var tag in todoTaskAddDto.Tags) {
-                var todoTaskTag = new TodoTaskTag() {
-                    TodoTaskId = todoTask.Id,
-                    TagId = tag.Id
-                };
-                await appDbContext.TodoTaskTag.AddAsync(todoTaskTag);
-                await appDbContext.SaveChangesAsync();
-            }
-
-            return todoTask;
+        public async Task AddTodoTaskTagAsync(TodoTaskTag todoTaskTag) {
+            await appDbContext.TodoTaskTag.AddAsync(todoTaskTag);
+            await appDbContext.SaveChangesAsync();
         }
 
         public async Task<List<TodoTaskResponseDto>> GetAllWithFilterAndSearchByUserIdAsync(string? userId, string? filter, string? search, bool? isDeleted) {
@@ -220,13 +208,7 @@ namespace todo_app_backend.Repositories
             .FirstOrDefaultAsync(todoTask => todoTask.Id == id);
         }
 
-        public async Task<TodoTask?> UpdateAsync(TodoTaskUpdateDto todoTaskUpdateDto) {
-            var todoTask = await appDbContext.TodoTask.FirstOrDefaultAsync(todoTask => todoTask.Id == todoTaskUpdateDto.Id);
-
-            if (todoTask is null) {
-                return null;
-            }
-
+        public async Task<TodoTask?> UpdateAsync(TodoTask todoTask, TodoTaskUpdateDto todoTaskUpdateDto) {
             todoTask.Id = todoTask.Id;
             todoTask.Name = todoTaskUpdateDto.Name ?? todoTask.Name;
             todoTask.Description = todoTaskUpdateDto.Description ?? todoTask.Description;
@@ -242,13 +224,9 @@ namespace todo_app_backend.Repositories
             return todoTask;
         }
 
-        public async Task DeleteAsync(string id) {
-            var todoTask = await appDbContext.TodoTask.FirstOrDefaultAsync(todoTask => todoTask.Id == id);
-
-            if (todoTask is not null) {
-                appDbContext.TodoTask.Remove(todoTask);
-                await appDbContext.SaveChangesAsync();
-            }
+        public async Task DeleteAsync(TodoTask todoTask) {
+            appDbContext.TodoTask.Remove(todoTask);
+            await appDbContext.SaveChangesAsync();
         }
     }
 }

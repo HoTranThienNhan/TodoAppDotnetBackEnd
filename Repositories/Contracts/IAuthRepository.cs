@@ -2,7 +2,7 @@ using todo_app_backend.Models;
 using todo_app_backend.DTOs.Auth;
 using todo_app_backend.Helpers;
 
-namespace todo_app_backend.Repositories
+namespace todo_app_backend.Repositories.Contracts
 {
     public interface IAuthRepository
     {

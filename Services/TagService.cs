@@ -1,7 +1,8 @@
 using todo_app_backend.DTOs.Tag;
 using todo_app_backend.Helpers;
 using todo_app_backend.Models;
-using todo_app_backend.Repositories;
+using todo_app_backend.Repositories.Contracts;
+using todo_app_backend.Services.Contracts;
 
 namespace todo_app_backend.Services
 {
@@ -21,15 +22,12 @@ namespace todo_app_backend.Services
             };
         }
 
-        public async Task<APIResponse?> FindAnyByNameAsync(TagAddDto tagAddDto) {
+        public async Task<bool> FindAnyByNameAsync(TagAddDto tagAddDto) {
             if (await tagRepository.FindAnyByNameAsync(tagAddDto)) {
-                return new APIResponse() {
-                    Success = false,
-                    Message = "Tag is already existed!"
-                };
+                return true;
             } 
 
-            return null;
+            return false;
         }  
     }
 }

@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using todo_app_backend.DTOs.Tag;
-using todo_app_backend.Repositories;
-using todo_app_backend.Services;
+using todo_app_backend.Services.Contracts;
 
 namespace todo_app_backend.Controllers
 {
@@ -17,8 +16,8 @@ namespace todo_app_backend.Controllers
 
             var foundTag = await tagService.FindAnyByNameAsync(tagAddDto);
 
-            if (foundTag is not null) {
-                return BadRequest(foundTag);
+            if (foundTag) {
+                return BadRequest("Tag has already existed.");
             }
 
             var tag = await tagService.AddAsync(tagAddDto);

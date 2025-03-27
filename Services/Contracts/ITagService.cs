@@ -1,7 +1,7 @@
 using todo_app_backend.DTOs.Tag;
 using todo_app_backend.Helpers;
 
-namespace todo_app_backend.Services
+namespace todo_app_backend.Services.Contracts
 {
     public interface ITagService
     {
@@ -9,7 +9,7 @@ namespace todo_app_backend.Services
             throw new NotImplementedException();
         }
 
-        Task<APIResponse?> FindAnyByNameAsync(TagAddDto tagAddDto) {
+        Task<bool> FindAnyByNameAsync(TagAddDto tagAddDto) {
             throw new NotImplementedException();
         }  
     }

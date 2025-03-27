@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using todo_app_backend.Data;
 using todo_app_backend.DTOs.Tag;
 using todo_app_backend.Models;
+using todo_app_backend.Repositories.Contracts;
 
 namespace todo_app_backend.Repositories
 {
