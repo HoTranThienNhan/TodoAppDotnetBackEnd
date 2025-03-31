@@ -98,6 +98,7 @@ namespace todo_app_backend.Repositories
             user.Username = userInfoDto.Username ?? user.Username;
             user.Email = userInfoDto.Email ?? user.Email;
             user.Phone = userInfoDto.Phone ?? user.Phone;
+            user.Avatar = userInfoDto.Avatar ?? user.Avatar;
             user.IsActive = userInfoDto.IsActive ?? user.IsActive;
 
             await appDbContext.SaveChangesAsync();

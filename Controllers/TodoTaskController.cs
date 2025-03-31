@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using todo_app_backend.DTOs.TodoTask;
-using todo_app_backend.Repositories.Contracts;
 using todo_app_backend.Services.Contracts;
 
 namespace todo_app_backend.Controllers
@@ -10,15 +9,15 @@ namespace todo_app_backend.Controllers
     [Route("/api/v1/[controller]")]
     [Authorize]
 
-    public class TodoTaskController(ITodoTaskService todoTaskService, IAuthRepository authRepository) : ControllerBase
+    public class TodoTaskController(ITodoTaskService todoTaskService) : ControllerBase
     {
         [HttpPost("add")]
         public async Task<ActionResult> AddTodoTask([FromBody] TodoTaskAddDto todoTaskAddDto) {
-            if (!await authRepository.FindAnyByIdAsync(todoTaskAddDto.UserId)) {
-                return BadRequest("UserID does not exist.");
-            }
-
             var todoTask = await todoTaskService.AddAsync(todoTaskAddDto);
+
+            if (todoTask!.Success == false) {
+                return BadRequest(todoTask);
+            }
 
             return Ok(todoTask);
         }

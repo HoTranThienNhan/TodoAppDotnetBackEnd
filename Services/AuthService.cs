@@ -38,6 +38,7 @@ namespace todo_app_backend.Services
                     user.Email = tempUser.Email;
                     user.Phone = tempUser.Phone;
                     user.Password = tempUser.Password;
+                    user.Avatar = tempUser.Avatar;
                     user.IsActive = tempUser.IsActive;
                     user.CreatedAt = tempUser.CreatedAt;
 
@@ -145,6 +146,7 @@ namespace todo_app_backend.Services
             tempUser.Email = userRegisterDto.Email;
             tempUser.Phone = userRegisterDto.Phone;
             tempUser.Password = hashedPassword;
+            tempUser.Avatar = "";
             tempUser.IsActive = true;
             tempUser.CreatedAt = DateTime.UtcNow;
 
@@ -278,24 +280,27 @@ namespace todo_app_backend.Services
             var verifiedHashedPassword = new PasswordHasher<User>().VerifyHashedPassword(user, user.Password, userLoginDto.Password);
             if (verifiedHashedPassword == PasswordVerificationResult.Failed)
             {
-                return null;
+                return new APIResponse()
+                {
+                    Success = false,
+                    Message = "Invalid email or password."
+                };
             }
 
-            var tokens = await CreateTokenResponse(user);
             return new APIResponse()
             {
-                Success = false,
+                Success = true,
                 Data = new UserLoginResponseDto() {
                     Email = user.Email,
-                    AccessToken = tokens!
+                    AccessToken = await CreateTokenResponse(user)
                 }
             };
         }
 
-        public async Task<string?> CreateTokenResponse(User user)
+        public async Task<string> CreateTokenResponse(User user)
         {
-            string accessToken = CreateToken(user!);
-            string refreshToken = await GenerateAndSaveRefreshTokenAsync(user!);
+            string accessToken = CreateToken(user);
+            string refreshToken = await GenerateAndSaveRefreshTokenAsync(user);
 
             // Store refresh token in HttpOnly Secure Cookie
             httpContextAccessor.HttpContext?.Response.Cookies.Append("refreshToken", refreshToken, new CookieOptions
@@ -327,7 +332,7 @@ namespace todo_app_backend.Services
                 issuer: JwtSetting.GetSection("Issuer").Value!,
                 audience: JwtSetting.GetSection("Audience").Value!,
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(30),
+                expires: DateTime.UtcNow.AddMinutes(2),
                 signingCredentials: creds
             );
 
@@ -410,6 +415,7 @@ namespace todo_app_backend.Services
                 Username = user.Username,
                 Email = user.Email,
                 Phone = user.Phone,
+                Avatar = user.Avatar,
                 IsActive = user.IsActive
             };
 
@@ -445,6 +451,7 @@ namespace todo_app_backend.Services
                     LastName = user.LastName,
                     Email = user.Email,
                     Phone = user.Phone,
+                    Avatar = user.Avatar,
                     IsActive = user.IsActive
                 }
             };

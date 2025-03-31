@@ -57,7 +57,6 @@ namespace todo_app_backend.Controllers
         }
 
         [HttpPost("refreshToken")]
-        [Authorize]
         public async Task<ActionResult> RefreshToken(UserRefreshTokenDto userRefreshTokenDt) {
             var accessToken = await authService.RefreshTokenAsync(userRefreshTokenDt);
 

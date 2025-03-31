@@ -6,7 +6,7 @@ using todo_app_backend.Services.Contracts;
 
 namespace todo_app_backend.Services
 {
-    public class TodoTaskService(ITodoTaskRepository todoTaskRepository): ITodoTaskService
+    public class TodoTaskService(ITodoTaskRepository todoTaskRepository, IAuthRepository authRepository): ITodoTaskService
     {
         public async Task<bool> FindAnyAsync(string id)
         {
@@ -20,6 +20,13 @@ namespace todo_app_backend.Services
 
         public async Task<APIResponse?> AddAsync(TodoTaskAddDto todoTaskAddDto)
         {
+            if (!await authRepository.FindAnyByIdAsync(todoTaskAddDto.UserId)) {
+                return new APIResponse() {
+                    Success = false,
+                    Message = "UserID does not exist."
+                };
+            }
+
             var todoTask = new TodoTask()
             {
                 Id = Guid.NewGuid().ToString(),

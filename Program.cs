@@ -29,26 +29,31 @@ builder.Services.AddScoped<ITodoTaskService, TodoTaskService>();
 builder.Services.AddScoped<ITodoSubtaskRepository, TodoSubtaskRepository>();
 builder.Services.AddScoped<ITodoSubtaskService, TodoSubtaskService>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(option => {
-        option.TokenValidationParameters = new TokenValidationParameters{
+    .AddJwtBearer(option =>
+    {
+        option.TokenValidationParameters = new TokenValidationParameters
+        {
             ValidateIssuer = true,
             ValidIssuer = JwtSettings.GetSection("Issuer").Value,
             ValidateAudience = true,
             ValidAudience = JwtSettings.GetSection("Audience").Value,
             ValidateLifetime = true,
-            ClockSkew = TimeSpan.Zero, 
+            ClockSkew = TimeSpan.Zero,
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(JwtSettings.GetSection("SecurityKey").Value!)
             ),
         };
     });
-builder.Services.AddCors(options => {
+builder.Services.AddCors(options =>
+{
     options.AddPolicy("AllowSpecificOrigins", policy =>
     {
-        policy.WithOrigins("http://localhost:4200") 
-              .AllowAnyHeader()  
-              .AllowAnyMethod(); 
+        policy.WithOrigins("http://localhost:4200")
+            //   .SetIsOriginAllowed(origin => true)
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
     });
 });
 builder.Services.AddHttpContextAccessor();
@@ -66,7 +71,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("AllowSpecificOrigins");
 app.UseHttpsRedirection();
-app.UseAuthentication(); 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.Run();

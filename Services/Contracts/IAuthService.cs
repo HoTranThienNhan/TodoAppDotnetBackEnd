@@ -26,7 +26,7 @@ namespace todo_app_backend.Services.Contracts
             throw new NotImplementedException();
         }
 
-        Task<bool> CheckUserActiveAsync(string userId)
+        Task<bool> CheckUserActiveAsync(string userEmail)
         {
             throw new NotImplementedException();
         }
