@@ -12,5 +12,9 @@ namespace todo_app_backend.Services.Contracts
         Task<bool> FindAnyByNameAsync(TagAddDto tagAddDto) {
             throw new NotImplementedException();
         }  
+
+        Task<APIResponse?> GetAllTagsByUserIdAsync(string userId) {
+            throw new NotImplementedException();
+        }
     }
 }

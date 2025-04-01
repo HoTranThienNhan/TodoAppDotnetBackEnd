@@ -9,5 +9,8 @@ namespace todo_app_backend.Models
         
         [JsonIgnore]
         public virtual ICollection<TodoTaskTag> TodoTaskTags { get; set; } = [];
+
+        [JsonIgnore]
+        public virtual ICollection<UserTag> UserTags { get; set; } = new List<UserTag>();
     }
 }

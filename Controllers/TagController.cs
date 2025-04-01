@@ -14,15 +14,21 @@ namespace todo_app_backend.Controllers
         [HttpPost("add")]
         public async Task<ActionResult> AddTag(TagAddDto tagAddDto) {
 
-            var foundTag = await tagService.FindAnyByNameAsync(tagAddDto);
-
-            if (foundTag) {
-                return BadRequest("Tag has already existed.");
-            }
-
             var tag = await tagService.AddAsync(tagAddDto);
 
+            if (!tag!.Success) {
+                return BadRequest(tag);
+            }
+
             return Ok(tag);
+        }
+
+        [HttpGet("getAll")]
+        public async Task<ActionResult> GetAllByUserId([FromQuery]string userId) {
+
+            var userTags = await tagService.GetAllTagsByUserIdAsync(userId);
+
+            return Ok(userTags);
         }
     }
 }

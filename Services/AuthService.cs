@@ -332,7 +332,7 @@ namespace todo_app_backend.Services
                 issuer: JwtSetting.GetSection("Issuer").Value!,
                 audience: JwtSetting.GetSection("Audience").Value!,
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(2),
+                expires: DateTime.UtcNow.AddMinutes(30),
                 signingCredentials: creds
             );
 
