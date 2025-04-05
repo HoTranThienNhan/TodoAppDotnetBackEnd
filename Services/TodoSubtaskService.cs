@@ -30,7 +30,7 @@ namespace todo_app_backend.Services
             };
         }
 
-        public async Task<APIResponse?> UpdateAsync(TodoSubtaskUpdateDto todoSubtaskUpdateDto)
+        public async Task<APIResponse?> UpdateAsync(TodoSubtaskDto todoSubtaskUpdateDto)
         {
             var todoSubtask = await todoSubtaskRepository.GetByIdAsync(todoSubtaskUpdateDto.Id);
 

@@ -1,5 +1,4 @@
 using todo_app_backend.DTOs.TodoSubtask;
-using todo_app_backend.Models;
 
 namespace todo_app_backend.DTOs.TodoTask
 {
@@ -14,7 +13,7 @@ namespace todo_app_backend.DTOs.TodoTask
         public bool IsDeleted { get; set; } 
         public string UserId { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
-        public virtual ICollection<string> Tags { get; set; } = [];
+        public virtual ICollection<Models.Tag> Tags { get; set; } = [];
         public virtual ICollection<TodoSubtaskDto> TodoSubTasks { get; set; } = [];
     }
 }

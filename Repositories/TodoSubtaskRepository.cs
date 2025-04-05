@@ -18,13 +18,21 @@ namespace todo_app_backend.Repositories
             return await appDbContext.TodoSubtask.FirstOrDefaultAsync(todoSubtask => todoSubtask.Id == id);
         }
 
-        public async Task UpdateAsync(TodoSubtask todoSubtask, TodoSubtaskUpdateDto todoSubtaskUpdateDto)
-        {
-            todoSubtask.Id = todoSubtaskUpdateDto.Id;
-            todoSubtask.Name = todoSubtaskUpdateDto.Name ?? todoSubtask.Name;
-            todoSubtask.IsDone = todoSubtaskUpdateDto.IsDone ?? todoSubtask.IsDone;
-            todoSubtask.TodoTaskId = todoSubtaskUpdateDto.TodoTaskId ?? todoSubtask.TodoTaskId;
+        public async Task<bool> FindAnyByNameAsync(string name) {
+            return await appDbContext.TodoSubtask.AnyAsync(todoSubtask => todoSubtask.Name == name);
+        }
 
+        public async Task UpdateAsync(TodoSubtask todoSubtask, TodoSubtaskDto todoSubtaskUpdateDto)
+        {
+            todoSubtask.Name = todoSubtaskUpdateDto.Name;
+            todoSubtask.IsDone = todoSubtaskUpdateDto.IsDone ?? todoSubtask.IsDone;
+
+            await appDbContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(TodoSubtask todoSubtask)
+        {
+            appDbContext.Remove(todoSubtask);
             await appDbContext.SaveChangesAsync();
         }
     }

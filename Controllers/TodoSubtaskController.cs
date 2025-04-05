@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using todo_app_backend.DTOs.TodoSubtask;
+using todo_app_backend.Models;
 using todo_app_backend.Services.Contracts;
 
 namespace todo_app_backend.Controllers
@@ -23,7 +24,7 @@ namespace todo_app_backend.Controllers
         }
 
         [HttpPost("update")]
-        public async Task<ActionResult> UpdateTodoSubtask([FromBody] TodoSubtaskUpdateDto todoSubtaskUpdateDto) {
+        public async Task<ActionResult> UpdateTodoSubtask([FromBody] TodoSubtaskDto todoSubtaskUpdateDto) {
             var todoSubtask = await todoSubtaskService.UpdateAsync(todoSubtaskUpdateDto);
 
             if (todoSubtask!.Success == false) {

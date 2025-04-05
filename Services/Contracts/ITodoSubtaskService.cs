@@ -9,7 +9,7 @@ namespace todo_app_backend.Services.Contracts
             throw new NotImplementedException();
         } 
 
-        Task<APIResponse?> UpdateAsync(TodoSubtaskUpdateDto todoSubtaskUpdateDto) {
+        Task<APIResponse?> UpdateAsync(TodoSubtaskDto todoSubtaskUpdateDto) {
             throw new NotImplementedException();
         } 
     }

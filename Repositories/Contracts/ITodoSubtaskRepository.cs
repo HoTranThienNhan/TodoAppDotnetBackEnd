@@ -13,7 +13,15 @@ namespace todo_app_backend.Repositories.Contracts
             throw new NotImplementedException();
         }
 
-        Task UpdateAsync(TodoSubtask todoSubtask, TodoSubtaskUpdateDto todoSubtaskUpdateDto) {
+        Task<bool> FindAnyByNameAsync(string name) {
+            throw new NotImplementedException();
+        }
+
+        Task UpdateAsync(TodoSubtask todoSubtask, TodoSubtaskDto todoSubtaskUpdateDto) {
+            throw new NotImplementedException();
+        } 
+
+        Task DeleteAsync(TodoSubtask todoSubtask) {
             throw new NotImplementedException();
         } 
     }
