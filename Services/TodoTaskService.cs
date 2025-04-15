@@ -48,6 +48,7 @@ namespace todo_app_backend.Services
 
             await todoTaskRepository.AddAsync(todoTask);
 
+            // add tags
             foreach (var tag in todoTaskAddDto.Tags)
             {
                 var todoTaskTag = new TodoTaskTag()
@@ -56,6 +57,18 @@ namespace todo_app_backend.Services
                     TagId = tag.Id
                 };
                 await todoTaskRepository.AddTodoTaskTagAsync(todoTaskTag);
+            }
+
+            // add todo subtasks
+            foreach (var todoSubtask in todoTaskAddDto.TodoSubtasks)
+            {
+                await todoSubtaskRepository.AddAsync(new TodoSubtask()
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    Name = todoSubtask.Name,
+                    IsDone = todoSubtask.IsDone ?? false,
+                    TodoTaskId = todoTask.Id
+                });
             }
 
             return new APIResponse()
@@ -100,7 +113,7 @@ namespace todo_app_backend.Services
             {
                 return new APIResponse()
                 {
-                    Success = true,
+                    Success = false,
                     Message = "Todo task does not exist."
                 };
             }
@@ -163,17 +176,17 @@ namespace todo_app_backend.Services
 
             // delete 
             var existedTodoTask = await todoTaskRepository.GetDetailsAsync(todoTaskUpdateDto.Id);
-            var removedTodoSubtasks = existedTodoTask!.TodoSubTasks.Where(u1 => !todoTaskUpdateDto.TodoSubtasks.Any(u2 => u1.Name == u2.Name)).ToList();
+            var removedTodoSubtasks = existedTodoTask!.TodoSubtasks.Where(u1 => !todoTaskUpdateDto.TodoSubtasks.Any(u2 => u1.Name == u2.Name)).ToList();
 
             foreach (var removedTodoSubtask in removedTodoSubtasks)
             {
-                    await todoSubtaskRepository.DeleteAsync(new TodoSubtask()
-                    {
-                        Id = removedTodoSubtask.Id,
-                        Name = removedTodoSubtask.Name,
-                        IsDone = removedTodoSubtask.IsDone ?? false,
-                        TodoTaskId = todoTaskUpdateDto.Id
-                    });
+                await todoSubtaskRepository.DeleteAsync(new TodoSubtask()
+                {
+                    Id = removedTodoSubtask.Id,
+                    Name = removedTodoSubtask.Name,
+                    IsDone = removedTodoSubtask.IsDone ?? false,
+                    TodoTaskId = todoTaskUpdateDto.Id
+                });
             }
 
             return new APIResponse()

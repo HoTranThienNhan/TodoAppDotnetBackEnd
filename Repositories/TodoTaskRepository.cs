@@ -50,7 +50,7 @@ namespace todo_app_backend.Repositories
                         UserId = todoTask.UserId,
                         CreatedAt = todoTask.CreatedAt,
                         Tags = todoTask.TodoTaskTags.Select(todoTaskTag => todoTaskTag.Tag).ToList(),
-                        TodoSubTasks = todoTask.TodoSubtasks.Select(todoSubtask => new TodoSubtaskDto() {
+                        TodoSubtasks = todoTask.TodoSubtasks.Select(todoSubtask => new TodoSubtaskDto() {
                             Id = todoSubtask.Id,
                             Name = todoSubtask.Name,
                             IsDone = todoSubtask.IsDone
@@ -76,7 +76,7 @@ namespace todo_app_backend.Repositories
                             UserId = todoTask.UserId,
                             CreatedAt = todoTask.CreatedAt,
                             Tags = todoTask.TodoTaskTags.Select(todoTaskTag => todoTaskTag.Tag).ToList(),
-                            TodoSubTasks = todoTask.TodoSubtasks.Select(todoSubtask => new TodoSubtaskDto() {
+                            TodoSubtasks = todoTask.TodoSubtasks.Select(todoSubtask => new TodoSubtaskDto() {
                                 Id = todoSubtask.Id,
                                 Name = todoSubtask.Name,
                                 IsDone = todoSubtask.IsDone
@@ -103,7 +103,7 @@ namespace todo_app_backend.Repositories
                             UserId = todoTask.UserId,
                             CreatedAt = todoTask.CreatedAt,
                             Tags = todoTask.TodoTaskTags.Select(todoTaskTag => todoTaskTag.Tag).ToList(),
-                            TodoSubTasks = todoTask.TodoSubtasks.Select(todoSubtask => new TodoSubtaskDto() {
+                            TodoSubtasks = todoTask.TodoSubtasks.Select(todoSubtask => new TodoSubtaskDto() {
                                 Id = todoSubtask.Id,
                                 Name = todoSubtask.Name,
                                 IsDone = todoSubtask.IsDone
@@ -129,7 +129,7 @@ namespace todo_app_backend.Repositories
                             UserId = todoTask.UserId,
                             CreatedAt = todoTask.CreatedAt,
                             Tags = todoTask.TodoTaskTags.Select(todoTaskTag => todoTaskTag.Tag).ToList(),
-                            TodoSubTasks = todoTask.TodoSubtasks.Select(todoSubtask => new TodoSubtaskDto() {
+                            TodoSubtasks = todoTask.TodoSubtasks.Select(todoSubtask => new TodoSubtaskDto() {
                                 Id = todoSubtask.Id,
                                 Name = todoSubtask.Name,
                                 IsDone = todoSubtask.IsDone
@@ -155,7 +155,7 @@ namespace todo_app_backend.Repositories
                             UserId = todoTask.UserId,
                             CreatedAt = todoTask.CreatedAt,
                             Tags = todoTask.TodoTaskTags.Select(todoTaskTag => todoTaskTag.Tag).ToList(),
-                            TodoSubTasks = todoTask.TodoSubtasks.Select(todoSubtask => new TodoSubtaskDto() {
+                            TodoSubtasks = todoTask.TodoSubtasks.Select(todoSubtask => new TodoSubtaskDto() {
                                 Id = todoSubtask.Id,
                                 Name = todoSubtask.Name,
                                 IsDone = todoSubtask.IsDone
@@ -184,7 +184,7 @@ namespace todo_app_backend.Repositories
                             UserId = todoTask.UserId,
                             CreatedAt = todoTask.CreatedAt,
                             Tags = todoTask.TodoTaskTags.Select(todoTaskTag => todoTaskTag.Tag).ToList(),
-                            TodoSubTasks = todoTask.TodoSubtasks.Select(todoSubtask => new TodoSubtaskDto() {
+                            TodoSubtasks = todoTask.TodoSubtasks.Select(todoSubtask => new TodoSubtaskDto() {
                                 Id = todoSubtask.Id,
                                 Name = todoSubtask.Name,
                                 IsDone = todoSubtask.IsDone
@@ -209,7 +209,7 @@ namespace todo_app_backend.Repositories
                 UserId = todoTask.UserId,
                 CreatedAt = todoTask.CreatedAt,
                 Tags = todoTask.TodoTaskTags.Select(todoTaskTag => todoTaskTag.Tag).ToList(),
-                TodoSubTasks = todoTask.TodoSubtasks.Select(todoSubtask => new TodoSubtaskDto() {
+                TodoSubtasks = todoTask.TodoSubtasks.Select(todoSubtask => new TodoSubtaskDto() {
                     Id = todoSubtask.Id,
                     Name = todoSubtask.Name,
                     IsDone = todoSubtask.IsDone

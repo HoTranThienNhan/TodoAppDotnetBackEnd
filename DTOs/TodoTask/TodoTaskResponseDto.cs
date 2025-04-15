@@ -14,6 +14,6 @@ namespace todo_app_backend.DTOs.TodoTask
         public string UserId { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
         public virtual ICollection<Models.Tag> Tags { get; set; } = [];
-        public virtual ICollection<TodoSubtaskDto> TodoSubTasks { get; set; } = [];
+        public virtual ICollection<TodoSubtaskDto> TodoSubtasks { get; set; } = [];
     }
 }

@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using todo_app_backend.DTOs.Tag;
+using todo_app_backend.DTOs.TodoSubtask;
 
 namespace todo_app_backend.DTOs.TodoTask
 {
@@ -21,5 +22,6 @@ namespace todo_app_backend.DTOs.TodoTask
         [Required(ErrorMessage = "{0} is required.")]
         public string UserId { get; set; } = string.Empty;
         public ICollection<TagDto> Tags { get; set; } = [];
+        public ICollection<TodoSubtaskDto> TodoSubtasks { get; set; } = [];
     }
 }
