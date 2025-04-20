@@ -34,7 +34,7 @@ namespace todo_app_backend.Repositories
                 .ThenInclude(t => t.Tag)
                 .Where(userTag => userTag.Id == userId)
                 .Select(user => new UserAllTagsResponseDto() {
-                    Tags = user.UserTags.Select(userTag => userTag.Tag).ToList(),
+                    Tags = user.UserTags.Select(userTag => userTag.Tag).OrderBy(userTag => userTag.Name).ToList(),
                 }).FirstOrDefaultAsync();
         }
 

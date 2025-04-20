@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using todo_app_backend.DTOs.TodoTask;
+using todo_app_backend.Helpers;
 using todo_app_backend.Services.Contracts;
 
 namespace todo_app_backend.Controllers
@@ -59,7 +60,10 @@ namespace todo_app_backend.Controllers
 
             await todoTaskService.DeleteAsync(id);
 
-            return Ok($"Delete Todo task with id: {id} task successfully.");
+            return Ok(new APIResponse() {
+                Success = true,
+                Message = "Delete Todo task with id: {id} task successfully."
+            });
         }
     }
 }

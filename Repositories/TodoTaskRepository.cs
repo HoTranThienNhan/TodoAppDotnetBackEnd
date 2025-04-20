@@ -39,6 +39,7 @@ namespace todo_app_backend.Repositories
                     .ThenInclude(t => t.Tag)
                     .Include(t => t.TodoSubtasks)
                     .Where(todoTask => todoTask.UserId == userId && todoTask.IsDeleted == isDeleted)
+                    .OrderByDescending(todoTask => todoTask.CreatedAt)
                     .Select(todoTask => new TodoTaskResponseDto() {
                         Id = todoTask.Id,
                         Name = todoTask.Name,
@@ -65,6 +66,7 @@ namespace todo_app_backend.Repositories
                         .Where(todoTask => todoTask.UserId == userId 
                             && todoTask.Date.Date.CompareTo(DateTime.UtcNow.Date) == 0
                             && todoTask.IsDeleted == isDeleted)
+                        .OrderByDescending(todoTask => todoTask.CreatedAt)
                         .Select(todoTask => new TodoTaskResponseDto() {
                             Id = todoTask.Id,
                             Name = todoTask.Name,
@@ -92,6 +94,7 @@ namespace todo_app_backend.Repositories
                         .Where(todoTask => todoTask.UserId == userId 
                             && todoTask.Date.Date.CompareTo(DateTime.UtcNow.Date) > 0
                             && todoTask.IsDeleted == isDeleted)
+                        .OrderByDescending(todoTask => todoTask.CreatedAt)
                         .Select(todoTask => new TodoTaskResponseDto() {
                             Id = todoTask.Id,
                             Name = todoTask.Name,
@@ -117,7 +120,8 @@ namespace todo_app_backend.Repositories
                         .Include(t => t.TodoSubtasks)
                         .Where(todoTask => todoTask.UserId == userId 
                             && todoTask.IsDone == true
-                            && todoTask.IsDeleted == isDeleted)
+                            && todoTask.IsDeleted == isDeleted)     
+                        .OrderByDescending(todoTask => todoTask.CreatedAt)
                         .Select(todoTask => new TodoTaskResponseDto() {
                             Id = todoTask.Id,
                             Name = todoTask.Name,
@@ -144,6 +148,7 @@ namespace todo_app_backend.Repositories
                         .Where(todoTask => todoTask.UserId == userId 
                             && todoTask.IsImportant == true
                             && todoTask.IsDeleted == isDeleted)
+                        .OrderByDescending(todoTask => todoTask.CreatedAt)
                         .Select(todoTask => new TodoTaskResponseDto() {
                             Id = todoTask.Id,
                             Name = todoTask.Name,
@@ -173,6 +178,7 @@ namespace todo_app_backend.Repositories
                         .Where(todoTask => todoTask.UserId == userId 
                             && todoTask.Name.Contains(search)
                             && todoTask.IsDeleted == isDeleted)
+                        .OrderByDescending(todoTask => todoTask.CreatedAt)
                         .Select(todoTask => new TodoTaskResponseDto() {
                             Id = todoTask.Id,
                             Name = todoTask.Name,

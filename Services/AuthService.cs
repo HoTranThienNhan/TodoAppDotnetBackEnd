@@ -109,7 +109,7 @@ namespace todo_app_backend.Services
 
                 return response;
             }
-            
+
             var otp = await authRepository.GetOtpByEmailAndTextAsync(userRegisterDto.Email);
 
             if (otp is null)
@@ -290,7 +290,8 @@ namespace todo_app_backend.Services
             return new APIResponse()
             {
                 Success = true,
-                Data = new UserLoginResponseDto() {
+                Data = new UserLoginResponseDto()
+                {
                     Email = user.Email,
                     AccessToken = await CreateTokenResponse(user)
                 }
@@ -357,40 +358,70 @@ namespace todo_app_backend.Services
         //
         public async Task<APIResponse?> RefreshTokenAsync(UserRefreshTokenDto userRefreshTokenDto)
         {
-            var user = await ValidateRefreshTokenAsync(userRefreshTokenDto.UserId!);
+            var apiRes = await ValidateRefreshTokenAsync(userRefreshTokenDto.UserId!);
+
+            if (apiRes!.Success == false)
+            {
+                return apiRes;
+            }
+
+            User? user = apiRes.Data as User;
+
+            return new APIResponse()
+            {
+                Success = true,
+                Data = new UserRefreshTokenResponseDto()
+                {
+                    AccessToken = await CreateTokenResponse(user!)
+                }
+            };
+        }
+
+        private async Task<APIResponse?> ValidateRefreshTokenAsync(string userId)
+        {
+            if (!httpContextAccessor.HttpContext!.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
+            {
+                return new APIResponse()
+                {
+                    Success = false,
+                    Message = "Cannot get refresh token."
+                };
+            }
+
+            var user = await authRepository.GetUserByIdAsync(userId);
 
             if (user is null)
             {
                 return new APIResponse()
                 {
                     Success = false,
-                    Message = "Invalid User ID or Refresh Token"
+                    Message = "User is not found."
+                };
+            }
+
+            if (user.RefreshToken != refreshToken)
+            {
+                return new APIResponse()
+                {
+                    Success = false,
+                    Message = "Wrong refresh token."
+                };
+            }
+
+            if (user.RefreshTokenExpiryTime <= DateTime.UtcNow)
+            {
+                return new APIResponse()
+                {
+                    Success = false,
+                    Message = "Refresh token is expired."
                 };
             }
 
             return new APIResponse()
             {
                 Success = true,
-                Data = new UserRefreshTokenResponseDto() {
-                    AccessToken = await CreateTokenResponse(user)
-                } 
+                Data = user
             };
-        }
-
-        private async Task<User?> ValidateRefreshTokenAsync(string userId)
-        {
-            if (!httpContextAccessor.HttpContext!.Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
-            {
-                return null;
-            }
-
-            var user = await authRepository.GetUserByIdAsync(userId);
-            if (user is null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
-            {
-                return null;
-            }
-
-            return user;
         }
 
         //
@@ -449,6 +480,7 @@ namespace todo_app_backend.Services
                     Id = user.Id,
                     FirstName = user.FirstName,
                     LastName = user.LastName,
+                    Username = user.Username,
                     Email = user.Email,
                     Phone = user.Phone,
                     Avatar = user.Avatar,
