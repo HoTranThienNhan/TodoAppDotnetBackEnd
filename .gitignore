@@ -482,3 +482,6 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+# OAuth2 Secret Key
+token.json/Google.Apis.Auth.OAuth2.Responses.TokenResponse-user
